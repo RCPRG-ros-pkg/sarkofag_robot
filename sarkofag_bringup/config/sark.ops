@@ -21,8 +21,6 @@ ros.import("limit_detector");
 ros.import("port_operations")
 ros.import("hardware_interface")
 ros.import("irp6_regulator")
-ros.import("cascade_regulator")
-ros.import("logger")
 ros.import("oro_joint_state_publisher")
 ros.import("internal_space_spline_trajectory_action")
 ros.import("internal_space_spline_trajectory_generator")
@@ -67,17 +65,6 @@ loadComponent("SarkofagRegulator","IRp6Regulator")
 SarkofagRegulator.loadService("rosparam")
 SarkofagRegulator.rosparam.getAll()
 SarkofagRegulator.configure()
-
-loadComponent("SarkofagCasRegulator","CascadeRegulator")
-SarkofagCasRegulator.loadService("rosparam")
-SarkofagCasRegulator.rosparam.getAll()
-SarkofagCasRegulator.configure()
-
-loadComponent("SarkofagLogger","Logger")
-setActivity("SarkofagLogger", 0.002, 4, ORO_SCHED_RT);
-SarkofagLogger.loadService("rosparam")
-SarkofagLogger.rosparam.getAll()
-SarkofagLogger.configure()
 
 
 // Sarkofag double port spliter
@@ -150,35 +137,17 @@ connect("SarkofagRegulator.deltaInc_in","SarkofagHardwareInterface.MotorIncremen
 connect("SarkofagRegulator.SynchroStateIn","SarkofagHardwareInterface.IsSynchronised", ConnPolicy())
 connect("SarkofagRegulator.EmergencyStopOut","SarkofagHardwareInterface.EmergencyStopIn", ConnPolicy())
 
-connect("SarkofagPortDoubleSum.InputPort_0","SarkofagCasRegulator.computedPwm_out", ConnPolicy())
-connect("SarkofagCasRegulator.DesiredPosition","SarkofagHardwareInterface.DesiredPosition_out_sarkofag", ConnPolicy())
-connect("SarkofagCasRegulator.MeasuredPosition","SarkofagHardwareInterface.MotorPosition_sarkofag", ConnPolicy())
-connect("SarkofagCasRegulator.deltaInc_in","SarkofagHardwareInterface.MotorIncrement_sarkofag", ConnPolicy())
-connect("SarkofagCasRegulator.SynchroStateIn","SarkofagHardwareInterface.IsSynchronised", ConnPolicy())
-connect("SarkofagCasRegulator.EmergencyStopOut","SarkofagHardwareInterface.EmergencyStopIn", ConnPolicy())
-
-connect("SarkofagLogger.DesiredPositionIn","SarkofagHardwareInterface.DesiredPosition_out_sarkofag", ConnPolicy())
-connect("SarkofagLogger.MotorPositionIn","SarkofagHardwareInterface.MotorPosition_sarkofag", ConnPolicy())
-connect("SarkofagLogger.MotorIncrementIn","SarkofagHardwareInterface.MotorIncrement_sarkofag", ConnPolicy())
-connect("SarkofagLogger.MotorCurrentIn","SarkofagHardwareInterface.MotorCurrent_sarkofag", ConnPolicy())
-connect("SarkofagLogger.HardwarePanicIn","SarkofagHardwareInterface.IsHardwarePanic", ConnPolicy())
-connect("SarkofagLogger.SynchroStateIn","SarkofagHardwareInterface.IsSynchronised", ConnPolicy())
-
 
 
 connect("SarkofagPortDoubleAggregate_hw_p.OutputPort","SarkofagM2J.MotorPosition", ConnPolicy())
 connect("SarkofagJ2M.MotorPosition", "SarkofagLimitDetector.InputPort", ConnPolicy())
 connect("SarkofagPortDoubleSplit_hw_cp.OutputPort_0","SarkofagHardwareInterface.MotorPositionCommand_sarkofag", ConnPolicy())
 connect("SarkofagPortDoubleSplit_hw_cp.OutputPort_0","SarkofagRegulator.DesiredPosition", ConnPolicy())
-connect("SarkofagPortDoubleSplit_hw_cp.OutputPort_0","SarkofagCasRegulator.DesiredPosition", ConnPolicy())
-connect("SarkofagPortDoubleSplit_hw_cp.OutputPort_0","SarkofagLogger.DesiredPositionIn", ConnPolicy())
-connect("SarkofagPortDoubleSplit_hw_cv.OutputPort_0","SarkofagLogger.DesiredVelocityIn", ConnPolicy())
 connect("SarkofagPortDoubleAggregate_hw_p.InputPort_0","SarkofagHardwareInterface.MotorPosition_sarkofag", ConnPolicy())
 
 addPeer("Sarkofagscheme", "SarkofagHardwareInterface")
 
 addPeer("Sarkofagscheme", "SarkofagRegulator");
-addPeer("Sarkofagscheme", "SarkofagCasRegulator");
 addPeer("Sarkofagscheme", "SarkofagPortDoubleSplit_hw_cp")
 addPeer("Sarkofagscheme", "SarkofagPortDoubleSplit_hw_cv")
 addPeer("Sarkofagscheme", "SarkofagPortDoubleAggregate_hw_p")
@@ -192,9 +161,7 @@ addPeer("Sarkofagscheme", "SarkofagSplineTrajectoryGeneratorMotor");
 Sarkofagscheme.addBlock("SarkofagHardwareInterface");
 
 Sarkofagscheme.addBlock("SarkofagRegulator")
-Sarkofagscheme.addBlock("SarkofagCasRegulator")
 Sarkofagscheme.latchConnections("SarkofagHardwareInterface", "SarkofagRegulator", true);
-Sarkofagscheme.latchConnections("SarkofagHardwareInterface", "SarkofagCasRegulator", true);
 Sarkofagscheme.addBlock("SarkofagPortDoubleSplit_hw_cp")
 Sarkofagscheme.addBlock("SarkofagPortDoubleSplit_hw_cv")
 Sarkofagscheme.addBlock("SarkofagLimitDetector")
@@ -260,9 +227,7 @@ SarkofagJntPub.configure()
 
 Sarkofagscheme.start()
 
-SarkofagLogger.start()
 SarkofagRegulator.start()
-//SarkofagCasRegulator.start()
 SarkofagPortDoubleSplit_hw_cp.start()
 SarkofagPortDoubleSplit_hw_cv.start()
 SarkofagLimitDetector.start()

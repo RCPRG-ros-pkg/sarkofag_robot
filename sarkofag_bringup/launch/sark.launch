@@ -59,30 +59,6 @@
         max_output_current: 20000.0
         max_desired_increment: 2000.0
         enc_res: 4000.0
-      SarkofagCasRegulator:
-        debug: false
-        eint_dif: 0.01
-        A: 0.412429378531
-        BB0: 1.5569592
-        BB1: 1.5028614
-        current_mode: true
-        current_reg_kp: 200.0
-        max_output_current: 20000.0
-        max_desired_increment: 2000.0
-        enc_res: 4000.0
-        KP_POS: 56.551942454832050
-        TI_POS: 39.284532385221590
-        TD_POS: 0.039012248063923
-        KP_INC: 0.890242379819815
-        TI_INC: 360.1924908049028
-        TD_INC: 0.001262394913177
-      SarkofagLogger:
-        reg_number: 1
-        max_log: 100
-        full_log: false
-        debug: false
-        pre_syn_export: false
-        filename: sarkofag
       SarkofagPortDoubleSplit_hw_cp:
         number_of_ports: 1
       SarkofagPortDoubleSplit_hw_cv:
