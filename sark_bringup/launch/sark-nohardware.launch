@@ -1,5 +1,15 @@
 <launch>
 
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find sark_description)/robots/sarkofag.urdf.xacro'" />
+ 
+  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher"/>
+  
+  <node pkg="diagnostic_aggregator" type="aggregator_node"
+        name="diagnostic_aggregator" >
+        
+  <rosparam command="load" file="$(find sark_bringup)/config/sark_analyzers.yaml" />
+  </node>
+
   <include file="$(find rtt_ros)/launch/deployer.launch">
     <arg name="NAME" value="SARK_OROCOS_ROBOT"/>
     <arg name="DEPLOYER_ARGS" value="-s $(find sark_bringup)/config/sark.ops"/>

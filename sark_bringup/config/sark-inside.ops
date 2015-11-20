@@ -130,7 +130,7 @@ connect("SarkofagPortDoubleAggregate_hw_p.OutputPort","SarkofagM2J.MotorPosition
 connect("SarkofagJ2M.MotorPosition", "SarkofagLimitDetector.InputPort", ConnPolicy())
 connect("SarkofagPortDoubleSplit_hw_cp.OutputPort_0","SarkHardwareInterface.MotorPositionCommand_sarkofag", ConnPolicy())
 connect("SarkofagPortDoubleSplit_hw_cp.OutputPort_0","SarkofagRegulator.DesiredPosition", ConnPolicy())
-connect("SarkofagPortDoubleAggregate_hw_p.InputPort_0","SarkHardwareInterface.MotorPositionsarkofag", ConnPolicy())
+connect("SarkofagPortDoubleAggregate_hw_p.InputPort_0","SarkHardwareInterface.MotorPosition_sarkofag", ConnPolicy())
 
 
 
@@ -221,6 +221,7 @@ connect("SarkofagM2J.JointPosition", "SarkofagJntPub.JointVelocity", ConnPolicy(
 connect("SarkofagM2J.JointPosition", "SarkofagJntPub.JointEffort", ConnPolicy());
 
 stream("SarkofagJntPub.joint_state", ros.comm.topic("sarkofag/joint_states"));
+stream("SarkofagJntPub.joint_state", ros.comm.topic("/joint_states"));
 
 SarkofagJntPub.configure()
 
