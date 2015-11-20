@@ -1,0 +1,8 @@
+import("rtt_ros")
+ros.import("rtt_rospack")
+
+runScript( ros.find("sark_bringup") + "/config/common-imports.ops")
+
+ros.import("sarkofag_kinematic")
+
+runScript( ros.find("sark_bringup") + "/config/sark-inside.ops")
