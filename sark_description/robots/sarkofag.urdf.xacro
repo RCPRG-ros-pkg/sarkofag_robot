@@ -53,7 +53,16 @@
       <material name="gray">
       <color rgba=".2 .2 .2 1" />
     </material>
-  </visual>
+    </visual>
+    <visual>
+      <origin rpy="0 1.57 0" xyz="0.09 0.0 0.90"/>
+      <geometry>
+         <cylinder radius="0.06" length="0.12"/>
+      </geometry>
+      <material name="gray">
+      <color rgba=".2 .2 .2 1" />
+    </material>
+    </visual>
   </link>
 
   <joint name="SarkofagJoint" type="revolute">
@@ -70,19 +79,22 @@
       <origin xyz="0.0 0.0 0.0"/>
       <inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/>
     </inertial>
-
     <visual>
-      <origin rpy="-1.57 0 0.0" xyz="0.2 0.0 0.2"/>
+      <origin rpy="-1.57 0 0.0" xyz="0.18 0.0 0.2"/>
       <geometry>
         <box size="0.02 0.8 0.04" />
       </geometry>
     </visual>
-
-    <collision>
-      <origin rpy="-1.57 0 0.0" xyz="0 0 0.4"/>
+    <visual>
+      <origin rpy="0 1.57 0" xyz="0.18 0.0 0.0"/>
       <geometry>
-        <!--<mesh filename="package://sark_description/meshes/link1.stlb" />-->
-	<box size="0.1 0.10 0.1"/>
+         <cylinder radius="0.06" length="0.06"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="-1.57 0 0.0" xyz="0.18 0 0.2"/>
+      <geometry>
+        <box size="0.02 0.8 0.04" />
       </geometry>
     </collision>
   </link>
