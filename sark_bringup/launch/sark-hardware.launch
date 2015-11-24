@@ -1,8 +1,18 @@
 <launch>
 
+  <param name="robot_description" command="$(find xacro)/xacro.py '$(find sark_description)/robots/sarkofag.urdf.xacro'" />
+ 
+  <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher"/>
+  
+  <node pkg="diagnostic_aggregator" type="aggregator_node"
+        name="diagnostic_aggregator" >
+        
+  <rosparam command="load" file="$(find sark_bringup)/config/sark_analyzers.yaml" />
+  </node>
+
   <include file="$(find rtt_ros)/launch/deployer.launch">
     <arg name="NAME" value="SARK_OROCOS_ROBOT"/>
-    <arg name="DEPLOYER_ARGS" value="-s $(find sark_bringup)/config/sark.ops"/>
+    <arg name="DEPLOYER_ARGS" value="-s $(find sark_bringup)/config/sark_hardware.ops"/>
     <arg name="LOG_LEVEL" value="Warning"/>
     <arg name="DEBUG" value="false"/>
   </include>
@@ -13,7 +23,7 @@
   <group ns="SARK_OROCOS_ROBOT">
     <rosparam>
       SarkHardwareInterface:
-        test_mode: false
+        test_mode: true
         timeouts_to_print: 3
     </rosparam>
   </group>
