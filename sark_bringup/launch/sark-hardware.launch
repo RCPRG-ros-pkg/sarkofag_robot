@@ -18,13 +18,14 @@
   </include>
 
   <group ns="SARK_OROCOS_ROBOT">
+    <param name="EC/master_config" command="cat $(find sark_bringup)/config/master_config.yaml"/>
     <rosparam>
       SarkDiag:
         hardware_label: Sarkofag
       SarkScheme:
         scheme_name: sarkofag_manager
       SarkHardwareInterface:
-        test_mode: true
+        test_mode: false
         timeouts_to_print: 3
         auto_synchronize: true
         rwh_nsec: 1200000

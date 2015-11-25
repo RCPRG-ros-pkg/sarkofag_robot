@@ -33,6 +33,14 @@ ros.import("hw_model")
 
 ros.import("sarkofag_kinematic")
 
+
+loadComponent("EC","ECHardware")
+setActivityOnCPU("EC", 0.001, 6, ORO_SCHED_RT, 3)
+EC.loadService("rosparam")
+EC.loadService("elmo_driver")
+EC.rosparam.getAll()
+EC.configure();
+
 //------------------------------------------------------------------------------
 //-- Controller manager
 //------------------------------------------------------------------------------
