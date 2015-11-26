@@ -1,0 +1,58 @@
+master_idx: 0
+terminals:
+ - name: sarkofag
+   vendor_id: 0x0000009a
+   device_id: 0x00030924
+   station_alias: 0
+   station_offset: 0
+   TPDO:
+    - index: 0x1a03
+      entries:
+       - index: 0x6064
+         subindex: 0
+         bit_length: 32
+       - index: 0x60fd
+         subindex: 0
+         bit_length: 32
+       - index: 0x606c
+         subindex: 0
+         bit_length: 32
+       - index: 0x6041
+         subindex: 0
+         bit_length: 16
+    - index: 0x1a13
+      entries:
+       - index: 0x6077
+         subindex: 0
+         bit_length: 16
+   RPDO:
+    - index: 0x1602
+      entries:
+       - index: 0x6071
+         subindex: 0
+         bit_length: 16
+       - index: 0x6040
+         subindex: 0
+         bit_length: 16
+    - index: 0x160b
+      entries:
+       - index: 0x6060
+         subindex: 0
+         bit_length: 8
+domains:
+ - name: main
+   period: 1
+   drivers:
+    - name: sarkofag
+      type: elmo_driver
+      terminal: sarkofag
+      interpolation_period:
+        value: 1
+        index: -3
+      homing:
+        mode: 5
+        speed_high: 10000
+        speed_low: 10000
+        acceleration: 1000000
+      control_mode: current
+
