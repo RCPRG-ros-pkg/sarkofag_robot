@@ -13,4 +13,4 @@ wget https://raw.githubusercontent.com/RCPRG-ros-pkg/sarkofag_robot/master/scrip
 
 cd ../../../../
 
-/tmp/update_and_compile
+bash /tmp/update_and_compile.bash
