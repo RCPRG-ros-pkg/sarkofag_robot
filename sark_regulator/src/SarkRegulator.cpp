@@ -37,6 +37,7 @@ const int MAX_PWM = 190;
 SarkRegulator::SarkRegulator(const std::string& name)
     : TaskContext(name),
       desired_position_("DesiredPosition"),
+      measured_position_("MeasuredPosition"),
       deltaInc_in("deltaInc_in"),
       computedPwm_out("computedPwm_out"),
       synchro_state_in_("SynchroStateIn"),

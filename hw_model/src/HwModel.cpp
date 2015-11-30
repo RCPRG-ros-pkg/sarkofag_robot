@@ -47,6 +47,7 @@ HwModel::HwModel(const std::string& name)
   this->addProperty("inertia", inertia_);
   this->addProperty("viscous_friction", viscous_friction_);
   this->addProperty("current_input", current_input_);
+  this->addProperty("enc_res", enc_res_).doc("");
 }
 
 HwModel::~HwModel() {
@@ -114,6 +115,7 @@ void HwModel::updateHook() {
       }
       //}
     }
+   // port_motor_position_.write(motor_position_*enc_res_/(2.0 * M_PI));
     port_motor_position_.write(motor_position_);
   }
 }
