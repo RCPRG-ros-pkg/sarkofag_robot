@@ -54,6 +54,7 @@ private:
 	void updateHook();
 
 	RTT::InputPort<double> desired_position_;
+	RTT::InputPort<double> measured_position_;
 	RTT::InputPort<double> deltaInc_in;
 	RTT::InputPort<bool> synchro_state_in_;
 
@@ -62,6 +63,7 @@ private:
 
 	double desired_position_increment_;
 	double desired_position_old_, desired_position_new_;
+	double measured_position_old_, measured_position_new_;
 	double deltaIncData;
 
 	bool synchro_state_old_, synchro_state_new_;

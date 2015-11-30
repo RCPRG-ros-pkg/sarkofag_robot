@@ -51,6 +51,8 @@ SarkRegulator::SarkRegulator(const std::string& name)
       desired_position_increment_(0.0),
       position_increment_new(0.0),
       position_increment_old(0.0),
+      measured_position_old_(0.0),
+      measured_position_new_(0.0),
       set_value_new(0.0),
       set_value_old(0.0),
       set_value_very_old(0.0),
@@ -65,9 +67,11 @@ SarkRegulator::SarkRegulator(const std::string& name)
       synchro_state_old_(false),
       synchro_state_new_(false),
       ft_(false),
-	  output_multiplicator_(0.0){
+      output_multiplicator_(0.0) {
   this->addEventPort(desired_position_).doc(
       "Receiving a value of position step.");
+  this->addPort(measured_position_).doc("Receiving a measured position");
+
   this->addPort(deltaInc_in).doc("Receiving a value of measured increment.");
   this->addPort(computedPwm_out).doc(
       "Sending value of calculated pwm or current.");
@@ -103,12 +107,23 @@ bool SarkRegulator::configureHook() {
 }
 
 void SarkRegulator::updateHook() {
+  bool new_data = false;
   if (RTT::NewData == deltaInc_in.read(deltaIncData)) {
+    new_data = true;
+  }
+
+  if (RTT::NewData == measured_position_.read(measured_position_new_)) {
+    new_data = true;
+    deltaIncData = measured_position_new_ - measured_position_old_;
+    measured_position_old_ = measured_position_new_;
+  }
+
+  if (new_data) {
     update_hook_iteration_number_++;
+
     if (update_hook_iteration_number_ <= 1) {
       deltaIncData = 0.0;
     }
-
     if (RTT::NewData == desired_position_.read(desired_position_new_)) {
       new_position_iteration_number_++;
       if (new_position_iteration_number_ <= 1) {
@@ -128,18 +143,18 @@ void SarkRegulator::updateHook() {
             * (enc_res_ / (2.0 * M_PI));
 
     /*
-    if (fabs(desired_position_increment_) > max_desired_increment_) {
-      std::cout << "very high pos_inc_: " << reg_number_ << " pos_inc: "
-                << desired_position_increment_ << std::endl;
+     if (fabs(desired_position_increment_) > max_desired_increment_) {
+     std::cout << "very high pos_inc_: " << reg_number_ << " pos_inc: "
+     << desired_position_increment_ << std::endl;
 
-      emergency_stop_out_.write(true);
-    }*/
+     emergency_stop_out_.write(true);
+     }*/
 
     desired_position_old_ = desired_position_new_;
 
     int output;
     if (synchro_state_old_ && ft_) {
-        output = doServo_friction_test(0.0, deltaIncData);
+      output = doServo_friction_test(0.0, deltaIncData);
     } else {
       output = doServo(desired_position_increment_, deltaIncData);
     }
@@ -199,14 +214,12 @@ int SarkRegulator::doServo(double step_new, double pos_inc) {
   if (set_value_new < -MAX_PWM)
     set_value_new = -MAX_PWM;
 
-
-    output_value = set_value_new * current_reg_kp_;
-    if (output_value > max_output_current_) {
-      output_value = max_output_current_;
-    } else if (output_value < -max_output_current_) {
-      output_value = -max_output_current_;
-    }
-
+  output_value = set_value_new * current_reg_kp_;
+  if (output_value > max_output_current_) {
+    output_value = max_output_current_;
+  } else if (output_value < -max_output_current_) {
+    output_value = -max_output_current_;
+  }
 
   if (debug_) {
     std::cout << "output_value: " << output_value << std::endl;
@@ -219,7 +232,7 @@ int SarkRegulator::doServo(double step_new, double pos_inc) {
   set_value_very_old = set_value_old;
   set_value_old = set_value_new;
 
-  return (static_cast<int>(output_value*output_multiplicator_));
+  return (static_cast<int>(output_value * output_multiplicator_));
 }
 
 int SarkRegulator::doServo_friction_test(double, double pos_inc) {
