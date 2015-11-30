@@ -41,7 +41,6 @@ SarkRegulator::SarkRegulator(const std::string& name)
       computedPwm_out("computedPwm_out"),
       synchro_state_in_("SynchroStateIn"),
       emergency_stop_out_("EmergencyStopOut"),
-      current_mode_(true),
       a_(0.0),
       b0_(0.0),
       b1_(0.0),
@@ -65,7 +64,8 @@ SarkRegulator::SarkRegulator(const std::string& name)
       desired_position_new_(0.0),
       synchro_state_old_(false),
       synchro_state_new_(false),
-      ft_(false) {
+      ft_(false),
+	  output_multiplicator_(0.0){
   this->addEventPort(desired_position_).doc(
       "Receiving a value of position step.");
   this->addPort(deltaInc_in).doc("Receiving a value of measured increment.");
@@ -79,6 +79,7 @@ SarkRegulator::SarkRegulator(const std::string& name)
   this->addProperty("BB1", BB1_).doc("");
   this->addProperty("max_output_current", max_output_current_).doc("");
   this->addProperty("current_reg_kp", current_reg_kp_).doc("");
+  this->addProperty("output_multiplicator", output_multiplicator_).doc("");
   this->addProperty("debug", debug_).doc("");
   this->addProperty("eint_dif", eint_dif_).doc("");
   this->addProperty("max_desired_increment", max_desired_increment_).doc("");
@@ -198,16 +199,14 @@ int SarkRegulator::doServo(double step_new, double pos_inc) {
   if (set_value_new < -MAX_PWM)
     set_value_new = -MAX_PWM;
 
-  if (current_mode_) {
+
     output_value = set_value_new * current_reg_kp_;
     if (output_value > max_output_current_) {
       output_value = max_output_current_;
     } else if (output_value < -max_output_current_) {
       output_value = -max_output_current_;
     }
-  } else {
-    output_value = set_value_new;
-  }
+
 
   if (debug_) {
     std::cout << "output_value: " << output_value << std::endl;
@@ -220,7 +219,7 @@ int SarkRegulator::doServo(double step_new, double pos_inc) {
   set_value_very_old = set_value_old;
   set_value_old = set_value_new;
 
-  return (static_cast<int>(output_value));
+  return (static_cast<int>(output_value*output_multiplicator_));
 }
 
 int SarkRegulator::doServo_friction_test(double, double pos_inc) {
