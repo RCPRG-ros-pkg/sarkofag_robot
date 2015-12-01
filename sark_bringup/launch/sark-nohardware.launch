@@ -56,7 +56,7 @@
       SarkofagMotorParameters:
         lower_limits: [-100000.0]
         upper_limits: [100000.0]
-        enc_res: [4000.0]
+        enc_res: [20000.0]
       SarkofagSplineTrajectoryGeneratorMotor:
         number_of_joints: 1
       SarkofagSplineTrajectoryActionMotor:
@@ -76,7 +76,7 @@
         output_multiplicator: 1000.0
         max_output_current: 20
         max_desired_increment: 2000.0
-        enc_res: 4000.0
+        enc_res: 20000.0
       SarkofagPortDoubleSplit_hw_to_reg:
         number_of_ports: 1
       SarkofagPortDoubleSplit_hw_cp:
