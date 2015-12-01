@@ -49,7 +49,7 @@ class HwModel : public RTT::TaskContext {
   RTT::InputPort<Eigen::VectorXd> port_desired_input_;
   RTT::OutputPort<Eigen::VectorXd> port_motor_position_;
 
-  Eigen::VectorXd motor_position_, motor_velocity_, motor_acceleration_;
+  Eigen::VectorXd enc_motor_position_, motor_position_, motor_velocity_, motor_acceleration_;
   Eigen::VectorXd desired_input_, desired_torque_, effective_torque_;
 
   int number_of_servos_;
@@ -58,7 +58,7 @@ class HwModel : public RTT::TaskContext {
   // properties
   int iteration_per_step_;
   int step_per_second_;
-  double enc_res_;
+  std::vector<double> enc_res_;
   std::vector<double> torque_constant_;
   std::vector<double> inertia_;
   std::vector<double> viscous_friction_;

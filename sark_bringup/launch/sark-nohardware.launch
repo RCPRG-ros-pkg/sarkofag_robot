@@ -47,7 +47,6 @@
         inertia: [0.00015]
         viscous_friction: [0.02]
         current_input: [true]
-        enc_res: 4000.0
       SarkofagSplineTrajectoryGeneratorJoint:
         number_of_joints: 1
       SarkofagSplineTrajectoryActionJoint:
@@ -57,6 +56,7 @@
       SarkofagMotorParameters:
         lower_limits: [-100000.0]
         upper_limits: [100000.0]
+        enc_res: [4000.0]
       SarkofagSplineTrajectoryGeneratorMotor:
         number_of_joints: 1
       SarkofagSplineTrajectoryActionMotor:
@@ -85,9 +85,6 @@
         number_of_ports: 1
       SarkofagPortDoubleSum:
         number_of_ports: 1
-      SarkofagIM2RM:
-        number_of_servos: 1
-        enc_res: 4000.0
       SarkofagJntPub:
         joint_names: [SarkofagJoint]
     </rosparam>

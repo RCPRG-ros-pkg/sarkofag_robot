@@ -67,7 +67,7 @@ bool HwModel::configureHook() {
         << RESET << std::endl;
     return false;
   }
-
+  enc_motor_position_.resize(number_of_servos_);
   motor_position_.resize(number_of_servos_);
   motor_velocity_.resize(number_of_servos_);
   motor_acceleration_.resize(number_of_servos_);
@@ -78,6 +78,7 @@ bool HwModel::configureHook() {
   port_motor_position_.setDataSample(motor_position_);
 
   for (int i = 0; i < number_of_servos_; i++) {
+    enc_motor_position_(i) = 0.0;
     motor_position_(i) = 0.0;
     motor_velocity_(i) = 0.0;
     motor_acceleration_(i) = 0.0;
@@ -112,13 +113,15 @@ void HwModel::updateHook() {
         motor_acceleration_(servo) = effective_torque_(servo) / inertia_[servo];
         motor_velocity_(servo) += motor_acceleration_(servo) / m_factor_;
         motor_position_(servo) += motor_velocity_(servo) / m_factor_;
+        enc_motor_position_(servo) = motor_position_(servo) * enc_res_[servo]
+            / (2.0 * M_PI);
       }
       //}
     }
     // port_motor_position_.write(motor_position_*enc_res_/(2.0 * M_PI));
-   // port_motor_position_.write(motor_position_);
+    // port_motor_position_.write(motor_position_);
   }
-  port_motor_position_.write(motor_position_*enc_res_/(2.0 * M_PI));
+  port_motor_position_.write(enc_motor_position_);
 }
 
 ORO_CREATE_COMPONENT(HwModel)
