@@ -77,6 +77,8 @@
         max_output_current: 20
         max_desired_increment: 2000.0
         enc_res: 4000.0
+      SarkofagPortDoubleSplit_hw_to_reg:
+        number_of_ports: 1
       SarkofagPortDoubleSplit_hw_cp:
         number_of_ports: 1
       SarkofagPortDoubleAggregate_hw_p:
