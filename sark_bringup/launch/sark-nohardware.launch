@@ -85,6 +85,9 @@
         number_of_ports: 1
       SarkofagPortDoubleSum:
         number_of_ports: 1
+      SarkofagIM2RM:
+        number_of_servos: 1
+        enc_res: 4000.0
       SarkofagJntPub:
         joint_names: [SarkofagJoint]
     </rosparam>

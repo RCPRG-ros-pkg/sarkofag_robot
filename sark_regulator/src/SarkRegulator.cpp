@@ -115,7 +115,7 @@ void SarkRegulator::updateHook() {
 
   if (RTT::NewData == measured_position_.read(measured_position_new_)) {
     new_data = true;
-    deltaIncData = (measured_position_new_ - measured_position_old_)* (enc_res_ / (2.0 * M_PI));
+    deltaIncData = (measured_position_new_ - measured_position_old_);
     measured_position_old_ = measured_position_new_;
   }
 

@@ -9,9 +9,6 @@ find_package(Eigen REQUIRED)
 
 include_directories(${catkin_INCLUDE_DIRS} ${Eigen_INCLUDE_DIRS})
 
-orocos_component(sarkofag_im2rm src/SarkofagIM2RM.cpp)
-target_link_libraries(sarkofag_im2rm ${catkin_LIBRARIES})
-
 orocos_component(sarkofag_m2j src/SarkofagM2J.cpp)
 target_link_libraries(sarkofag_m2j ${catkin_LIBRARIES})
 

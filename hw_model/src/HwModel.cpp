@@ -115,10 +115,10 @@ void HwModel::updateHook() {
       }
       //}
     }
-   // port_motor_position_.write(motor_position_*enc_res_/(2.0 * M_PI));
+    // port_motor_position_.write(motor_position_*enc_res_/(2.0 * M_PI));
    // port_motor_position_.write(motor_position_);
   }
-  port_motor_position_.write(motor_position_);
+  port_motor_position_.write(motor_position_*enc_res_/(2.0 * M_PI));
 }
 
 ORO_CREATE_COMPONENT(HwModel)
