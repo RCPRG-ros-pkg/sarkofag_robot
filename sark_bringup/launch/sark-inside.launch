@@ -39,7 +39,7 @@
         BB0: 1.5569592
         BB1: 1.5028614
         current_reg_kp: 0.2
-        output_multiplicator: 1000.0
+        output_multiplicator: 13.3
         max_output_current: 20
         max_desired_increment: 2000.0
         enc_res: 20000.0
