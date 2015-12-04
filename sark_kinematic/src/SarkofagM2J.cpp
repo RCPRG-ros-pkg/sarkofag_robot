@@ -28,10 +28,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "../../sark_kinematic/src/SarkofagM2J.h"
+
 #include <rtt/Component.hpp>
 #include <string>
-#include "SarkofagM2J.h"
-#include "SarkofagTransmission.h"
+
+#include "../../sark_kinematic/src/SarkofagTransmission.h"
 
 SarkofagM2J::SarkofagM2J(const std::string& name)
     : RTT::TaskContext(name, PreOperational) {
