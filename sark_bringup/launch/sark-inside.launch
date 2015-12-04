@@ -6,14 +6,6 @@
         hardware_label: Sarkofag
       SarkScheme:
         scheme_name: sarkofag_manager
-      SarkHwModel:
-        iteration_per_step: 1
-        step_per_second: 500
-        torque_constant: [0.105]
-        input_current_multiplicator: [13.3]
-        inertia: [0.00015]
-        viscous_friction: [0.02]
-        current_input: [true]
       SarkofagSplineTrajectoryGeneratorJoint:
         number_of_joints: 1
       SarkofagSplineTrajectoryActionJoint:
