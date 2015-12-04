@@ -32,5 +32,6 @@
 #define SARKOFAGTRANSMISSION_H_
 
 const double GEAR = -158.0;
+const double OFFSET = 0.985;
 
 #endif  // SARKOFAGTRANSMISSION_H_

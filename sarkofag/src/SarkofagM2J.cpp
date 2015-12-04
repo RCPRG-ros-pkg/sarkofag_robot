@@ -56,7 +56,7 @@ void SarkofagM2J::updateHook() {
 }
 
 void SarkofagM2J::mp2i(const double* motors, double* joints) {
-  joints[0] = motors[0] / GEAR;
+  joints[0] = motors[0] / GEAR - OFFSET;
 }
 
 ORO_CREATE_COMPONENT(SarkofagM2J)

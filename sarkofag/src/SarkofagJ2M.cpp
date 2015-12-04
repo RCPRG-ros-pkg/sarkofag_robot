@@ -57,7 +57,7 @@ void SarkofagJ2M::updateHook() {
 }
 
 bool SarkofagJ2M::i2mp(const double* joints, double* motors) {
-  motors[0] = joints[0] * GEAR;
+  motors[0] = (joints[0] + OFFSET) * GEAR ;
   return true;
 }
 

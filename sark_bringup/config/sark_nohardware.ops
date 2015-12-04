@@ -1,35 +1,8 @@
 import("rtt_ros")
 
 ros.import("rtt_rospack")
-ros.import("rtt_rosnode")
-ros.import("rtt_actionlib")
-ros.import("rtt_std_msgs")
-ros.import("rtt_sensor_msgs")
-ros.import("rtt_actionlib_msgs")
-ros.import("rtt_trajectory_msgs")
-ros.import("rtt_control_msgs")
-ros.import("rtt_cartesian_trajectory_msgs")
-ros.import("rtt_force_control_msgs")
-ros.import("rtt_hi_mw_msgs")
 
-ros.import("conman")
-ros.import("rtt_conman_msgs")
-ros.import("conman_ros")
-ros.import("eigen_typekit");
-ros.import("rtt_tf");
-ros.import("limit_detector");
-ros.import("port_operations")
-ros.import("hardware_interface_mw")
-ros.import("sark_regulator")
-ros.import("sark_diagnostic")
-ros.import("oro_joint_state_publisher")
-ros.import("internal_space_spline_trajectory_action")
-ros.import("internal_space_spline_trajectory_generator")
-ros.import("controller_common")
-ros.import("hw_model")
-
-
-ros.import("sarkofag_kinematic")
+runScript( ros.find("sark_bringup") + "/config/common-imports.ops")
 
 
 //------------------------------------------------------------------------------
@@ -43,23 +16,11 @@ SarkScheme.loadService("conman_ros")
 SarkScheme.configure()
 
 
-//------------------------------------------------------------------------------
-//-- SarkHardwareInterface
-//------------------------------------------------------------------------------
-// loadComponent("SarkHardwareInterface","HardwareInterfaceMW")
-// SarkHardwareInterface.loadService("rosparam")
-// SarkHardwareInterface.rosparam.getAll()
-// SarkHardwareInterface.configure()
-// stream("SarkHardwareInterface.DoSynchroIn", ros.comm.topic("/sark_hardware_interface/do_synchro_in"))
-
 loadComponent("SarkDiag", "SarkDiagnostic")
 setActivity("SarkDiag", 0.1, 1, ORO_SCHED_RT)
 SarkDiag.loadService("rosparam");
 SarkDiag.rosparam.getAll();
 
-// connect("SarkDiag.SynchroStateIn","SarkHardwareInterface.IsSynchronised", ConnPolicy())
-// connect("SarkDiag.HardwaPanicIn","SarkHardwareInterface.IsHardwarePanic", ConnPolicy())
-// connect("SarkDiag.HardwaBusyIn","SarkHardwareInterface.IsHardwareBusy", ConnPolicy())
 stream("SarkDiag.Diagnostics", ros.comm.topic("/diagnostics"));
 SarkDiag.configure()
 
@@ -68,8 +29,6 @@ loadComponent("SarkHwModel","HwModel")
 SarkHwModel.loadService("rosparam")
 SarkHwModel.rosparam.getAll()
 SarkHwModel.rosparam.getParam("~/SarkofagMotorParameters/enc_res", "enc_res")
-// connect("SarkHwModel.DesiredInput","SarkHardwareInterface.DesiredHwModelOutput", ConnPolicy())
-// connect("SarkHwModel.MotorPosition","SarkHardwareInterface.HwModelMotorPosition", ConnPolicy())
 SarkHwModel.configure()
 
 loadComponent("SarkofagIM2RM","IM2RM")
@@ -135,8 +94,6 @@ SarkofagSplineTrajectoryGeneratorJoint.loadService("rosparam");
 SarkofagSplineTrajectoryGeneratorJoint.rosparam.getAll();
 connect("SarkofagM2J.JointPosition","SarkofagSplineTrajectoryGeneratorJoint.JointPosition", ConnPolicy())
 connect("SarkofagSplineTrajectoryGeneratorJoint.JointPositionCommand","SarkofagJ2M.JointPosition", ConnPolicy())
-// connect("SarkofagSplineTrajectoryGeneratorJoint.IsSynchronisedIn","SarkHardwareInterface.IsSynchronised", ConnPolicy())
-// connect("SarkofagSplineTrajectoryGeneratorJoint.GeneratorActiveOut","SarkHardwareInterface.GeneratorActiveIn", ConnPolicy())
 SarkofagSplineTrajectoryGeneratorJoint.configure()
 
 
@@ -150,8 +107,6 @@ connect("SarkofagLimitDetector.OutputPort","SarkofagPortDoubleSplit_hw_cp.InputP
 
 connect("SarkofagIM2RM.RadianMotorPosition","SarkofagSplineTrajectoryGeneratorMotor.JointPosition", ConnPolicy())
 connect("SarkofagSplineTrajectoryGeneratorMotor.JointPositionCommand","SarkofagLimitDetector.InputPort", ConnPolicy())
-// connect("SarkofagSplineTrajectoryGeneratorMotor.IsSynchronisedIn","SarkHardwareInterface.IsSynchronised", ConnPolicy())
-// connect("SarkofagSplineTrajectoryGeneratorMotor.GeneratorActiveOut","SarkHardwareInterface.GeneratorActiveIn", ConnPolicy())
 SarkofagSplineTrajectoryGeneratorMotor.configure()
 
 
@@ -159,28 +114,18 @@ SarkofagSplineTrajectoryGeneratorMotor.configure()
 connect("SarkofagPortDoubleAggregate_reg_to_hw.InputPort_0","SarkofagRegulator.computedPwm_out", ConnPolicy())
 connect("SarkHwModel.DesiredInput","SarkofagPortDoubleAggregate_reg_to_hw.OutputPort", ConnPolicy())
 
-// connect("SarkHwModel.DesiredInput","SarkHardwareInterface.DesiredHwModelOutput", ConnPolicy())
-// connect("SarkHwModel.MotorPosition","SarkHardwareInterface.HwModelMotorPosition", ConnPolicy())
-
 connect("SarkofagPortDoubleSplit_hw_to_reg.InputPort","SarkHwModel.MotorPosition", ConnPolicy())
 connect("SarkofagIM2RM.IncrementalMotorPosition","SarkHwModel.MotorPosition", ConnPolicy())
 connect("SarkofagRegulator.MeasuredPosition","SarkofagPortDoubleSplit_hw_to_reg.OutputPort_0", ConnPolicy())
-
-// connect("SarkofagRegulator.DesiredPosition","SarkHardwareInterface.DesiredPosition_out_sarkofag", ConnPolicy())
-// connect("SarkofagRegulator.deltaInc_in","SarkHardwareInterface.MotorIncrement_sarkofag", ConnPolicy())
-// connect("SarkofagRegulator.SynchroStateIn","SarkHardwareInterface.IsSynchronised", ConnPolicy())
-// connect("SarkofagRegulator.EmergencyStopOut","SarkHardwareInterface.EmergencyStopIn", ConnPolicy())
 
 
 
 connect("SarkofagIM2RM.RadianMotorPosition","SarkofagM2J.MotorPosition", ConnPolicy())
 connect("SarkofagJ2M.MotorPosition", "SarkofagLimitDetector.InputPort", ConnPolicy())
-// connect("SarkofagPortDoubleSplit_hw_cp.OutputPort_0","SarkHardwareInterface.MotorPositionCommand_sarkofag", ConnPolicy())
 connect("SarkofagPortDoubleSplit_hw_cp.OutputPort_0","SarkofagRegulator.DesiredPosition", ConnPolicy())
 
 
 
-// addPeer("SarkScheme", "SarkHardwareInterface")
 addPeer("SarkScheme", "SarkHwModel");
 addPeer("SarkScheme", "SarkofagIM2RM");
 
@@ -196,16 +141,13 @@ addPeer("SarkScheme", "SarkofagSplineTrajectoryGeneratorJoint");
 addPeer("SarkScheme", "SarkofagSplineTrajectoryGeneratorMotor");
 
 
-// SarkScheme.addBlock("SarkHardwareInterface");
 SarkScheme.addBlock("SarkHwModel");
 SarkScheme.addBlock("SarkofagIM2RM");
-// SarkScheme.latchConnections("SarkHardwareInterface", "SarkHwModel", true);
 
 
 
 SarkScheme.addBlock("SarkofagRegulator")
 SarkScheme.latchConnections("SarkofagRegulator", "SarkHwModel", true);
-// SarkScheme.latchConnections("SarkHardwareInterface", "SarkofagRegulator", true);
 SarkScheme.addBlock("SarkofagPortDoubleSplit_hw_cp")
 SarkScheme.addBlock("SarkofagPortDoubleSplit_hw_to_reg")
 SarkScheme.addBlock("SarkofagLimitDetector")
@@ -215,9 +157,6 @@ SarkScheme.latchConnections("SarkofagRegulator", "SarkofagPortDoubleAggregate_re
 SarkScheme.addBlock("SarkofagJ2M");
 SarkScheme.addBlock("SarkofagSplineTrajectoryGeneratorJoint");
 SarkScheme.addBlock("SarkofagSplineTrajectoryGeneratorMotor");
-// SarkScheme.latchConnections("SarkHardwareInterface", "SarkofagSplineTrajectoryGeneratorJoint", true);
-// SarkScheme.latchConnections("SarkHardwareInterface", "SarkofagSplineTrajectoryGeneratorMotor", true);
-
 
 
 
@@ -293,7 +232,6 @@ SarkofagSplineTrajectoryActionJoint.start()
 SarkofagSplineTrajectoryActionMotor.start()
 SarkofagJntPub.start()
 
-// SarkHardwareInterface.start()
 SarkHwModel.start()
 SarkofagIM2RM.start()
 SarkDiag.start()
