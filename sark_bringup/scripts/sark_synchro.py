@@ -56,9 +56,9 @@ if __name__ == '__main__':
   rospy.wait_for_service('/sarkofag_manager/switch_controller')
   conmanSwitch = rospy.ServiceProxy('/sarkofag_manager/switch_controller', SwitchController)
   
-  conmanSwitch(['SarkofagSplineTrajectoryGeneratorJoint'], [], True)
+  conmanSwitch(['SarkofagSplineTrajectoryGeneratorMotor'], [], True)
   
-  joint_client = actionlib.SimpleActionClient('/sarkofag/spline_trajectory_action_joint', FollowJointTrajectoryAction)
+  joint_client = actionlib.SimpleActionClient('/sarkofag/spline_trajectory_action_motor', FollowJointTrajectoryAction)
   joint_client.wait_for_server()
 
   print 'server ok'
@@ -73,7 +73,7 @@ if __name__ == '__main__':
   joint_client.wait_for_result()
   command_result = joint_client.get_result()
      
-  conmanSwitch([], ['SarkofagSplineTrajectoryGeneratorJoint'], True)
+  conmanSwitch([], ['SarkofagSplineTrajectoryGeneratorMotor'], True)
   
   print 'finish'
   

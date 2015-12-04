@@ -60,7 +60,8 @@ class HwModel : public RTT::TaskContext {
   int step_per_second_;
   std::vector<double> enc_res_;
   std::vector<double> torque_constant_;
-  std::vector<double> inertia_;
+  std::vector<double> input_current_multiplicator_;
+    std::vector<double> inertia_;
   std::vector<double> viscous_friction_;
   std::vector<bool> current_input_;
 };
