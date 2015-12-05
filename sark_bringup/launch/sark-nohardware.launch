@@ -30,6 +30,8 @@
         inertia: [0.00015]
         viscous_friction: [0.02]
         current_input: [true]
+      SarkofagPortDoubleAggregate_reg_to_hw:
+        number_of_ports: 1
     </rosparam>
   </group>
 
