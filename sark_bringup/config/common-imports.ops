@@ -8,7 +8,6 @@ ros.import("rtt_trajectory_msgs")
 ros.import("rtt_control_msgs")
 ros.import("rtt_cartesian_trajectory_msgs")
 ros.import("rtt_force_control_msgs")
-ros.import("rtt_hi_mw_msgs")
 
 ros.import("conman")
 ros.import("rtt_conman_msgs")
@@ -25,4 +24,4 @@ ros.import("internal_space_spline_trajectory_generator")
 ros.import("controller_common")
 ros.import("hw_model")
 
-ros.import("sarkofag_kinematic")
+ros.import("sark_kinematic")

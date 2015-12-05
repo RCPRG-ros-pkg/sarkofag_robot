@@ -42,8 +42,6 @@
         number_of_ports: 1
       SarkofagPortDoubleAggregate_hw_p:
         number_of_ports: 1
-      SarkofagPortDoubleAggregate_reg_to_hw:
-        number_of_ports: 1
       SarkofagPortDoubleSum:
         number_of_ports: 1
       SarkofagJntPub:

@@ -51,21 +51,21 @@ import PyKDL
 import tf_conversions.posemath as pm
 
 if __name__ == '__main__':
-  rospy.init_node('sark_simple_trajectory')
+  rospy.init_node('sark_synchro_motor')
   
   rospy.wait_for_service('/sarkofag_manager/switch_controller')
   conmanSwitch = rospy.ServiceProxy('/sarkofag_manager/switch_controller', SwitchController)
   
-  conmanSwitch(['SarkofagSplineTrajectoryGeneratorJoint'], [], True)
+  conmanSwitch(['SarkofagSplineTrajectoryGeneratorMotor'], [], True)
   
-  joint_client = actionlib.SimpleActionClient('/sarkofag/spline_trajectory_action_joint', FollowJointTrajectoryAction)
+  joint_client = actionlib.SimpleActionClient('/sarkofag/spline_trajectory_action_motor', FollowJointTrajectoryAction)
   joint_client.wait_for_server()
 
   print 'server ok'
 
   goal = FollowJointTrajectoryGoal()
   goal.trajectory.joint_names = ['joint1']
-  goal.trajectory.points.append(JointTrajectoryPoint([1.57], [0.0], [], [], rospy.Duration(10.0)))
+  goal.trajectory.points.append(JointTrajectoryPoint([0.0], [0.0], [], [], rospy.Duration(10.0)))
   goal.trajectory.header.stamp = rospy.get_rostime() + rospy.Duration(0.2)
 
   joint_client.send_goal(goal)
@@ -73,7 +73,7 @@ if __name__ == '__main__':
   joint_client.wait_for_result()
   command_result = joint_client.get_result()
      
-  conmanSwitch([], ['SarkofagSplineTrajectoryGeneratorJoint'], True)
+  conmanSwitch([], ['SarkofagSplineTrajectoryGeneratorMotor'], True)
   
   print 'finish'
   
