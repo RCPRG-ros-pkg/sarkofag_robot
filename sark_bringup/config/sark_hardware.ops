@@ -7,6 +7,7 @@ runScript( ros.find("sark_bringup") + "/config/common-imports.ops")
 
 ros.import("ec_hardware")
 ros.import("ec_drivers")
+ros.import("ec_manager")
 
 
 loadComponent("EC","ECHardware")
@@ -35,6 +36,12 @@ SarkDiag.rosparam.getAll();
 
 stream("SarkDiag.Diagnostics", ros.comm.topic("/diagnostics"));
 SarkDiag.configure()
+
+
+loadComponent("SarkECManager","ECManager")
+SarkECManager.loadService("rosparam")
+SarkECManager.rosparam.getAll()
+SarkECManager.configure()
 
 loadComponent("SarkofagIM2RM","IM2RM")
 SarkofagIM2RM.loadService("rosparam")
@@ -128,6 +135,7 @@ connect("SarkofagPortDoubleSplit_hw_cp.OutputPort_0","SarkofagRegulator.DesiredP
 
 
 
+addPeer("SarkScheme", "SarkECManager");
 addPeer("SarkScheme", "SarkofagIM2RM");
 
 
@@ -141,6 +149,8 @@ addPeer("SarkScheme", "SarkofagJ2M");
 addPeer("SarkScheme", "SarkofagSplineTrajectoryGeneratorJoint");
 addPeer("SarkScheme", "SarkofagSplineTrajectoryGeneratorMotor");
 
+addPeer("SarkECManager", "EC");
+addPeer("SarkECManager", "SarkofagRegulator");
 
 SarkScheme.addBlock("SarkofagIM2RM");
 
@@ -219,8 +229,9 @@ SarkofagJntPub.configure()
 
 
 SarkScheme.start()
+SarkECManager.start()
 
-//EC.start()
+EC.start()
 //SarkofagRegulator.start()
 SarkofagPortDoubleSplit_hw_cp.start()
 SarkofagPortDoubleSplit_hw_to_reg.start()
