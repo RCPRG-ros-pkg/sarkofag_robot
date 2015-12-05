@@ -24,4 +24,4 @@ ros.import("internal_space_spline_trajectory_generator")
 ros.import("controller_common")
 ros.import("hw_model")
 
-ros.import("sarkofag_kinematic")
+ros.import("sark_kinematic")
