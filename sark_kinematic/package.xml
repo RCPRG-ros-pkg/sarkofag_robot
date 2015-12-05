@@ -1,5 +1,5 @@
 <package>
-  <name>sarkofag_kinematic</name>
+  <name>sark_kinematic</name>
   <version>0.0.3</version>
   <description>sarkofag gears transmission</description>
   <maintainer email="bartswis@gmail.com">Bartosz Świstak</maintainer>
