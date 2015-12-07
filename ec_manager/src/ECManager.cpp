@@ -34,8 +34,8 @@
 
 
 ECManager::ECManager(const std::string& name)
-    : TaskContext(name, PreOperational),
-      state_(NOT_SYNCHRONIZED) {
+: TaskContext(name),
+  state_(NOT_SYNCHRONIZED) {
 
   this->addProperty("debug", debug_).doc("");
 
@@ -50,19 +50,118 @@ bool ECManager::configureHook() {
 bool ECManager::startHook() {
 
   EC = RTT::TaskContext::getPeer("EC");
-  Regulator = RTT::TaskContext::getPeer("SarkofagRegulator");
+  Scheme = RTT::TaskContext::getPeer("SarkScheme");
 
   if (debug_) {
     std::cout << "EC_active:" << EC->isActive() << std::endl;
     std::cout << "EC_running:" << EC->isRunning() << std::endl;
-    std::cout << "Regulator_active:" << Regulator->isActive() << std::endl;
-    std::cout << "Regulator_running:" << Regulator->isRunning() << std::endl;
+    std::cout << "Scheme_active:" << Scheme->isActive() << std::endl;
+    std::cout << "Scheme_running:" << Scheme->isRunning() << std::endl;
+
+    std::cout <<  EC->provides("sarkofag")  << std::endl;
+    std::vector<std::string> att_vec = EC->provides("sarkofag")->getAttributeNames();
+    std::vector<std::string> ope_vec = EC->provides("sarkofag")->getOperationNames();
+
+    for (int i=0; i<ope_vec.size(); i++) {
+      std::cout << "sarkofag." << ope_vec[i] << std::endl;
+    }
+    for (int i=0; i<att_vec.size(); i++) {
+      std::cout << "sarkofag." << att_vec[i] << std::endl;
+    }
   }
 
   return true;
 }
 
 void ECManager::updateHook() {
+
+  RTT::Attribute<ServoState> * servo_state = (RTT::Attribute<ServoState> *) EC->provides("sarkofag")->getAttribute("state");
+  RTT::Attribute<State> * homing = (RTT::Attribute<State> *) EC->provides("sarkofag")->getAttribute("homing_done");
+
+  servo_state_ = servo_state->get();
+
+  if (debug_) {
+    std::cout << "sarkofag.state = " << servo_state_ << std::endl;
+    std::cout << "sarkofag.homing_done = " << homing->get() << std::endl;
+  }
+
+  RTT::OperationCaller<bool(void)> enable;
+  RTT::OperationCaller<bool(void)> resetFault;
+  RTT::OperationCaller<bool(void)> beginHoming;
+  RTT::OperationCaller<bool(const std::vector<std::string> &disable_block_names,
+                            const std::vector<std::string> &enable_block_names,
+                            const bool strict,
+                            const bool force)> switchBlocks;
+
+  switch (servo_state_) {
+
+    case INVALID:
+      break;
+
+    case NOT_READY_TO_SWITCH_ON:
+      break;
+
+    case SWITCH_ON_DISABLED:
+      break;
+
+    case READY_TO_SWITCH_ON:
+      break;
+
+    case SWITCH_ON:
+      enable = EC->provides("sarkofag")->getOperation("enable");
+      enable.setCaller(this->engine());
+      enable();
+      break;
+
+    case OPERATION_ENABLED:
+
+      switch (state_) {
+
+        case NOT_SYNCHRONIZED:
+          beginHoming = EC->provides("sarkofag")->getOperation("beginHoming");
+          beginHoming.setCaller(this->engine());
+          beginHoming();
+          state_ = SYNCHRONIZING;
+          break;
+
+        case SYNCHRONIZING:
+            if (homing->get()) state_ = SYNCHRONIZED;
+          break;
+
+        case SYNCHRONIZED:
+          disable_.clear();
+          enable_.clear();
+          enable_.push_back("SarkofagRegulator");
+          switchBlocks = Scheme->getOperation("switchBlocks");
+          switchBlocks.setCaller(this->engine());
+          switchBlocks(disable_,enable_,true,true);
+          state_ = RUNNING;
+          break;
+
+        case RUNNING:
+          break;
+
+        default:
+          break;
+      }
+
+      break;
+
+        case QUICK_STOP_ACTIVE:
+          break;
+
+        case FAULT_REACTION_ACTIVE:
+          break;
+
+        case FAULT:
+          resetFault = EC->provides("sarkofag")->getOperation("resetFault");
+          resetFault.setCaller(this->engine());
+          std::cout << resetFault() << std::endl;
+          break;
+
+        default:
+          break;
+  }
 
 }
 

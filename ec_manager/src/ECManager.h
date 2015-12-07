@@ -36,6 +36,10 @@
 #include <rtt/TaskContext.hpp>
 #include <rtt/Port.hpp>
 #include <rtt/Component.hpp>
+#include <rtt/OperationCaller.hpp>
+#include <rtt/SendHandle.hpp>
+#include <rtt/Attribute.hpp>
+#include <rtt/base/AttributeBase.hpp>
 
 #include <rtt/extras/SlaveActivity.hpp>
 
@@ -46,7 +50,8 @@
 typedef enum {
   NOT_SYNCHRONIZED,
   SYNCHRONIZING,
-  SYNCHRONIZED
+  SYNCHRONIZED,
+  RUNNING
 } State;
 
 typedef enum {
@@ -76,11 +81,14 @@ class ECManager : public RTT::TaskContext {
  private:
 
   TaskContext * EC;
-  TaskContext * Regulator;
+  TaskContext * Scheme;
 
   State state_;
   ControlMode control_mode_;
   ServoState servo_state_;
+
+  std::vector<std::string> disable_;
+  std::vector<std::string> enable_;
 
   // Properties
   bool debug_;
