@@ -23,8 +23,8 @@
   <group ns="SARK_OROCOS_ROBOT">
     <param name="EC/master_config" command="cat $(find sark_bringup)/config/master_config.yaml"/>
     <rosparam>
-      SarkECManager:
-        debug: true
+      ECManager:
+        debug: false
       SarkofagPortDoubleAggregate_im2rm:
         number_of_ports: 1
     </rosparam>
