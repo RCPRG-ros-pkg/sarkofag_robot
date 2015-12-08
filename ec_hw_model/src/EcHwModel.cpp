@@ -36,8 +36,7 @@
 
 EcHwModel::EcHwModel(const std::string& name)
     : RTT::TaskContext(name, PreOperational),
-      number_of_servos_(0),
-      m_factor_(0) {
+      number_of_servos_(0) {
   this->ports()->addPort("MotorPosition", port_motor_position_);
   this->ports()->addPort("DesiredInput", port_desired_input_);
 
@@ -66,32 +65,16 @@ bool EcHwModel::configureHook() {
         << RESET << std::endl;
     return false;
   }
-  enc_motor_position_.resize(number_of_servos_);
-  motor_position_.resize(number_of_servos_);
-  motor_velocity_.resize(number_of_servos_);
-  motor_acceleration_.resize(number_of_servos_);
-  desired_input_.resize(number_of_servos_);
-  desired_torque_.resize(number_of_servos_);
-  effective_torque_.resize(number_of_servos_);
+
   drives_.resize(number_of_servos_);
-
-  port_motor_position_.setDataSample(motor_position_);
-
-  for (int i = 0; i < number_of_servos_; i++) {
-    enc_motor_position_(i) = 0.0;
-    motor_position_(i) = 0.0;
-    motor_velocity_(i) = 0.0;
-    motor_acceleration_(i) = 0.0;
-    desired_input_(i) = 0.0;
-    desired_torque_(i) = 0.0;
-    effective_torque_(i) = 0.0;
-  }
-
-  m_factor_ = step_per_second_ * iteration_per_step_;
 
   // dodanie do listy drive wszystkich symulowanych napędów
   for (int i = 0; i < number_of_servos_; i++) {
-    EcDriveModel::Ptr drive(new EcDriveModel(services_names_[i]));
+    EcDriveModel::Ptr drive(
+        new EcDriveModel(services_names_[i], iteration_per_step_,
+                         step_per_second_, enc_res_[i], torque_constant_[i],
+                         input_current_multiplicator_[i], inertia_[i],
+                         viscous_friction_[i]));
     drives_[i] = drive;
     this->provides()->addService(drive->provides());
   }
@@ -103,29 +86,31 @@ void EcHwModel::updateHook() {
   for (int i = 0; i < number_of_servos_; i++) {
     drives_[i]->update();
   }
+  /*
+   if (RTT::NewData == port_desired_input_.read(desired_input_)) {
+   //    std::cout << "HwModel updateHook" << desired_input_(1) << std::endl;
+   // pytanie czy to nie przychodzi w inkrementach
+   for (int servo = 0; servo < number_of_servos_; servo++) {
+   // prad jest w miliamperach
+   desired_torque_(servo) = desired_input_(servo) * torque_constant_[servo]
+   / input_current_multiplicator_[servo];
 
-  if (RTT::NewData == port_desired_input_.read(desired_input_)) {
-//    std::cout << "HwModel updateHook" << desired_input_(1) << std::endl;
-// pytanie czy to nie przychodzi w inkrementach
-    for (int servo = 0; servo < number_of_servos_; servo++) {
-      // prad jest w miliamperach
-      desired_torque_(servo) = desired_input_(servo) * torque_constant_[servo]
-          / input_current_multiplicator_[servo];
+   for (int iteration = 0; iteration < iteration_per_step_; iteration++) {
+   effective_torque_(servo) = desired_torque_(servo)
+   - motor_velocity_(servo) * viscous_friction_[servo];
+   motor_acceleration_(servo) = effective_torque_(servo) / inertia_[servo];
+   motor_velocity_(servo) += motor_acceleration_(servo) / m_factor_;
+   motor_position_(servo) += motor_velocity_(servo) / m_factor_;
+   enc_motor_position_(servo) = motor_position_(servo) * enc_res_[servo]
+   / (2.0 * M_PI);
+   }
+   }
 
-      for (int iteration = 0; iteration < iteration_per_step_; iteration++) {
-        effective_torque_(servo) = desired_torque_(servo)
-            - motor_velocity_(servo) * viscous_friction_[servo];
-        motor_acceleration_(servo) = effective_torque_(servo) / inertia_[servo];
-        motor_velocity_(servo) += motor_acceleration_(servo) / m_factor_;
-        motor_position_(servo) += motor_velocity_(servo) / m_factor_;
-        enc_motor_position_(servo) = motor_position_(servo) * enc_res_[servo]
-            / (2.0 * M_PI);
-      }
-    }
-    // port_motor_position_.write(motor_position_*enc_res_/(2.0 * M_PI));
-    // port_motor_position_.write(motor_position_);
-  }
-  port_motor_position_.write(enc_motor_position_);
+   // port_motor_position_.write(motor_position_*enc_res_/(2.0 * M_PI));
+   // port_motor_position_.write(motor_position_);
+   }
+   port_motor_position_.write(enc_motor_position_);
+   */
 }
 
 ORO_CREATE_COMPONENT(EcHwModel)

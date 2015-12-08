@@ -31,7 +31,6 @@
 #ifndef ECHWMODEL_H_
 #define ECHWMODEL_H_
 
-
 #include <rtt/TaskContext.hpp>
 #include <rtt/Port.hpp>
 #include <Eigen/Dense>
@@ -51,12 +50,7 @@ class EcHwModel : public RTT::TaskContext {
   RTT::InputPort<Eigen::VectorXd> port_desired_input_;
   RTT::OutputPort<Eigen::VectorXd> port_motor_position_;
 
-  Eigen::VectorXd enc_motor_position_, motor_position_, motor_velocity_,
-      motor_acceleration_;
-  Eigen::VectorXd desired_input_, desired_torque_, effective_torque_;
-
   int number_of_servos_;
-  int m_factor_;
 
   std::vector<EcDriveModel::Ptr> drives_;
 

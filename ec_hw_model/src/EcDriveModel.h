@@ -32,6 +32,7 @@
 #define ECDRIVEMODEL_H_
 
 #include <boost/smart_ptr/shared_ptr.hpp>
+#include <rtt/Port.hpp>
 #include <rtt/Service.hpp>
 
 #include <string>
@@ -40,15 +41,30 @@ class EcDriveModel {
  public:
   typedef boost::shared_ptr<EcDriveModel> Ptr;
 
-  explicit EcDriveModel(const std::string &name);
+  explicit EcDriveModel(const std::string &name, int iteration_per_step,
+                        int step_per_second, double enc_res,
+                        double torque_constant,
+                        double input_current_multiplicator, double inertia,
+                        double viscous_friction);
   ~EcDriveModel();
 
   RTT::Service::shared_ptr provides();
 
   void update();
 
+ private:
+  RTT::InputPort<double> port_desired_input_;
+  RTT::OutputPort<double> port_motor_position_;
+
  protected:
   RTT::Service::shared_ptr service_;
+  double enc_motor_position_, motor_position_, motor_velocity_,
+      motor_acceleration_, desired_input_, desired_torque_, effective_torque_;
+
+  int iteration_per_step_, step_per_second_;
+  int m_factor_;
+  double enc_res_, torque_constant_, input_current_multiplicator_, inertia_,
+      viscous_friction_;
 };
 
 #endif  // ECDRIVEMODEL_H_

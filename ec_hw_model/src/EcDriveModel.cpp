@@ -33,8 +33,29 @@
 #include "EcDriveModel.h"
 #include "string_colors.h"
 
-EcDriveModel::EcDriveModel(const std::string &name)
-    : service_(new RTT::Service(name)) {
+EcDriveModel::EcDriveModel(const std::string &name, int iteration_per_step,
+                           int step_per_second, double enc_res,
+                           double torque_constant,
+                           double input_current_multiplicator, double inertia,
+                           double viscous_friction)
+    : service_(new RTT::Service(name)),
+      enc_motor_position_(0.0),
+      motor_position_(0.0),
+      motor_velocity_(0.0),
+      motor_acceleration_(0.0),
+      desired_input_(0.0),
+      desired_torque_(0.0),
+      effective_torque_(0.0),
+      m_factor_(0),
+      iteration_per_step_(iteration_per_step),
+      step_per_second_(step_per_second),
+      enc_res_(enc_res),
+      torque_constant_(torque_constant),
+      input_current_multiplicator_(input_current_multiplicator),
+      inertia_(inertia),
+      viscous_friction_(viscous_friction) {
+  this->provides()->addPort("MotorPosition", port_motor_position_);
+  this->provides()->addPort("DesiredInput", port_desired_input_);
 }
 
 EcDriveModel::~EcDriveModel() {
@@ -45,4 +66,23 @@ RTT::Service::shared_ptr EcDriveModel::provides() {
 }
 
 void EcDriveModel::update() {
+  if (RTT::NewData == port_desired_input_.read(desired_input_)) {
+    //    std::cout << "HwModel updateHook" << desired_input_(1) << std::endl;
+    // pytanie czy to nie przychodzi w inkrementach
+
+    // prad jest w miliamperach
+    desired_torque_ = desired_input_ * torque_constant_
+        / input_current_multiplicator_;
+
+    for (int iteration = 0; iteration < iteration_per_step_; iteration++) {
+      effective_torque_ = desired_torque_ - motor_velocity_ * viscous_friction_;
+      motor_acceleration_ = effective_torque_ / inertia_;
+      motor_velocity_ += motor_acceleration_ / m_factor_;
+      motor_position_ += motor_velocity_ / m_factor_;
+      enc_motor_position_ = motor_position_ * enc_res_ / (2.0 * M_PI);
+    }
+    // port_motor_position_.write(motor_position_*enc_res_/(2.0 * M_PI));
+    // port_motor_position_.write(motor_position_);
+  }
+  port_motor_position_.write(enc_motor_position_);
 }
