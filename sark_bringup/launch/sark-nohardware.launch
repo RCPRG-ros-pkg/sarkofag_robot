@@ -30,8 +30,6 @@
         inertia: [0.00015]
         viscous_friction: [0.02]
         services_names: [sarkofag]
-      SarkofagPortDoubleAggregate_reg_to_hw:
-        number_of_ports: 1
     </rosparam>
   </group>
 
