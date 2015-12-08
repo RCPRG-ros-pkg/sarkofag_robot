@@ -87,11 +87,13 @@ class ECManager : public RTT::TaskContext {
   ControlMode control_mode_;
   ServoState servo_state_;
 
-  std::vector<std::string> disable_;
-  std::vector<std::string> enable_;
+  std::vector<std::string> disable_vec_;
+  std::vector<std::string> enable_vec_;
 
   // Properties
   bool debug_;
+  std::string service_;
+  std::string regulator_;
 
  public:
   explicit ECManager(const std::string& name);

@@ -25,6 +25,10 @@
     <rosparam>
       ECManager:
         debug: false
+        service: sarkofag
+        regulator: SarkofagRegulator
+      SarkofagPortDoubleAggregate_im2rm:
+        number_of_ports: 1
     </rosparam>
   </group>
 
