@@ -28,42 +28,38 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HWMODEL_H_
-#define HWMODEL_H_
+#ifndef ECHWMODEL_H_
+#define ECHWMODEL_H_
 
 #include <rtt/TaskContext.hpp>
 #include <rtt/Port.hpp>
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
+#include "EcDriveModel.h"
 
-class HwModel : public RTT::TaskContext {
+class EcHwModel : public RTT::TaskContext {
  public:
-  explicit HwModel(const std::string& name);
-  virtual ~HwModel();
+  explicit EcHwModel(const std::string& name);
+  virtual ~EcHwModel();
 
   bool configureHook();
   void updateHook();
 
  private:
-  RTT::InputPort<Eigen::VectorXd> port_desired_input_;
-  RTT::OutputPort<Eigen::VectorXd> port_motor_position_;
-
-  Eigen::VectorXd enc_motor_position_, motor_position_, motor_velocity_, motor_acceleration_;
-  Eigen::VectorXd desired_input_, desired_torque_, effective_torque_;
-
   int number_of_servos_;
-  int m_factor_;
+
+  std::vector<EcDriveModel::Ptr> drives_;
 
   // properties
   int iteration_per_step_;
   int step_per_second_;
+  std::vector<std::string> services_names_;
   std::vector<double> enc_res_;
   std::vector<double> torque_constant_;
   std::vector<double> input_current_multiplicator_;
-    std::vector<double> inertia_;
+  std::vector<double> inertia_;
   std::vector<double> viscous_friction_;
-  std::vector<bool> current_input_;
 };
 
-#endif  // HWMODEL_H_
+#endif  // ECHWMODEL_H_

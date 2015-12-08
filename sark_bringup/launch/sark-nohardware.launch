@@ -22,16 +22,14 @@
 
   <group ns="SARK_OROCOS_ROBOT">
     <rosparam>
-      SarkHwModel:
+      SarkEcHwModel:
         iteration_per_step: 1
         step_per_second: 500
         torque_constant: [0.105]
         input_current_multiplicator: [13.3]
         inertia: [0.00015]
         viscous_friction: [0.02]
-        current_input: [true]
-      SarkofagPortDoubleAggregate_reg_to_hw:
-        number_of_ports: 1
+        services_names: [sarkofag]
     </rosparam>
   </group>
 
