@@ -56,6 +56,9 @@ EcDriveModel::EcDriveModel(const std::string &name, int iteration_per_step,
       viscous_friction_(viscous_friction) {
   this->provides()->addPort("MotorPosition", port_motor_position_);
   this->provides()->addPort("DesiredInput", port_desired_input_);
+
+  m_factor_ = step_per_second_ * iteration_per_step_;
+
 }
 
 EcDriveModel::~EcDriveModel() {
@@ -67,7 +70,7 @@ RTT::Service::shared_ptr EcDriveModel::provides() {
 
 void EcDriveModel::update() {
   if (RTT::NewData == port_desired_input_.read(desired_input_)) {
-    //    std::cout << "HwModel updateHook" << desired_input_(1) << std::endl;
+    //  std::cout << "EcDriveModel updateHook: " << desired_input_ << std::endl;
     // pytanie czy to nie przychodzi w inkrementach
 
     // prad jest w miliamperach
@@ -84,5 +87,6 @@ void EcDriveModel::update() {
     // port_motor_position_.write(motor_position_*enc_res_/(2.0 * M_PI));
     // port_motor_position_.write(motor_position_);
   }
+  // std::cout << "EcDriveModel updateHook: " << enc_motor_position_ << std::endl;
   port_motor_position_.write(enc_motor_position_);
 }

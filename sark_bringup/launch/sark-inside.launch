@@ -46,6 +46,8 @@
         number_of_ports: 1
       SarkofagJntPub:
         joint_names: [SarkofagJoint]
+      SarkofagPortDoubleAggregate_im2rm:
+        number_of_ports: 1
     </rosparam>
   </group>
 
