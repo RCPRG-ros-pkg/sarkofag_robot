@@ -38,7 +38,8 @@ ECManager::ECManager(const std::string& name)
   state_(NOT_SYNCHRONIZED) {
 
   this->addProperty("debug", debug_).doc("");
-
+  this->addProperty("service", service_).doc("");
+  this->addProperty("regulator", regulator_).doc("");
 }
 
 ECManager::~ECManager() {
@@ -58,15 +59,15 @@ bool ECManager::startHook() {
     std::cout << "Scheme_active:" << Scheme->isActive() << std::endl;
     std::cout << "Scheme_running:" << Scheme->isRunning() << std::endl;
 
-    std::cout <<  EC->provides("sarkofag")  << std::endl;
-    std::vector<std::string> att_vec = EC->provides("sarkofag")->getAttributeNames();
-    std::vector<std::string> ope_vec = EC->provides("sarkofag")->getOperationNames();
+    std::cout <<  EC->provides(service_)  << std::endl;
+    std::vector<std::string> att_vec = EC->provides(service_)->getAttributeNames();
+    std::vector<std::string> ope_vec = EC->provides(service_)->getOperationNames();
 
     for (int i=0; i<ope_vec.size(); i++) {
-      std::cout << "sarkofag." << ope_vec[i] << std::endl;
+      std::cout << service_ << "." << ope_vec[i] << std::endl;
     }
     for (int i=0; i<att_vec.size(); i++) {
-      std::cout << "sarkofag." << att_vec[i] << std::endl;
+      std::cout << service_ << "." << att_vec[i] << std::endl;
     }
   }
 
@@ -75,14 +76,14 @@ bool ECManager::startHook() {
 
 void ECManager::updateHook() {
 
-  RTT::Attribute<ServoState> * servo_state = (RTT::Attribute<ServoState> *) EC->provides("sarkofag")->getAttribute("state");
-  RTT::Attribute<State> * homing = (RTT::Attribute<State> *) EC->provides("sarkofag")->getAttribute("homing_done");
+  RTT::Attribute<ServoState> * servo_state = (RTT::Attribute<ServoState> *) EC->provides(service_)->getAttribute("state");
+  RTT::Attribute<State> * homing = (RTT::Attribute<State> *) EC->provides(service_)->getAttribute("homing_done");
 
   servo_state_ = servo_state->get();
 
   if (debug_) {
-    std::cout << "sarkofag.state = " << servo_state_ << std::endl;
-    std::cout << "sarkofag.homing_done = " << homing->get() << std::endl;
+    std::cout << service_ << ".state = " << servo_state_ << std::endl;
+    std::cout << service_ << ".homing_done = " << homing->get() << std::endl;
   }
 
   RTT::OperationCaller<bool(void)> enable;
@@ -108,7 +109,7 @@ void ECManager::updateHook() {
       break;
 
     case SWITCH_ON:
-      enable = EC->provides("sarkofag")->getOperation("enable");
+      enable = EC->provides(service_)->getOperation("enable");
       enable.setCaller(this->engine());
       enable();
       break;
@@ -118,7 +119,7 @@ void ECManager::updateHook() {
       switch (state_) {
 
         case NOT_SYNCHRONIZED:
-          beginHoming = EC->provides("sarkofag")->getOperation("beginHoming");
+          beginHoming = EC->provides(service_)->getOperation("beginHoming");
           beginHoming.setCaller(this->engine());
           beginHoming();
           state_ = SYNCHRONIZING;
@@ -129,12 +130,12 @@ void ECManager::updateHook() {
           break;
 
         case SYNCHRONIZED:
-          disable_.clear();
-          enable_.clear();
-          enable_.push_back("SarkofagRegulator");
+          disable_vec_.clear();
+          enable_vec_.clear();
+          enable_vec_.push_back(regulator_);
           switchBlocks = Scheme->getOperation("switchBlocks");
           switchBlocks.setCaller(this->engine());
-          switchBlocks(disable_,enable_,true,true);
+          switchBlocks(disable_vec_,enable_vec_,true,true);
           state_ = RUNNING;
           break;
 
@@ -154,7 +155,7 @@ void ECManager::updateHook() {
           break;
 
         case FAULT:
-          resetFault = EC->provides("sarkofag")->getOperation("resetFault");
+          resetFault = EC->provides(service_)->getOperation("resetFault");
           resetFault.setCaller(this->engine());
           std::cout << resetFault() << std::endl;
           break;
