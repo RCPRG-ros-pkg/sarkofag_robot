@@ -9,7 +9,7 @@ find_package(Eigen REQUIRED)
 
 include_directories(${catkin_INCLUDE_DIRS} ${Eigen_INCLUDE_DIRS})
 
-orocos_component(hw_model src/EcHwModel.cpp)
-target_link_libraries(hw_model ${catkin_LIBRARIES})
+orocos_component(ec_hw_model src/EcHwModel.cpp src/EcDriveModel.cpp)
+target_link_libraries(ec_hw_model ${catkin_LIBRARIES})
 
 orocos_generate_package()

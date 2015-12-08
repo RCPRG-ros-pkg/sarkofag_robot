@@ -45,10 +45,10 @@ EcHwModel::EcHwModel(const std::string& name)
   this->addProperty("iteration_per_step", iteration_per_step_);
   this->addProperty("step_per_second", step_per_second_);
   this->addProperty("torque_constant", torque_constant_);
-  this->addProperty("input_current_multiplicator", input_current_multiplicator_);
+  this->addProperty("input_current_multiplicator",
+                    input_current_multiplicator_);
   this->addProperty("inertia", inertia_);
   this->addProperty("viscous_friction", viscous_friction_);
-  this->addProperty("current_input", current_input_);
   this->addProperty("enc_res", enc_res_).doc("");
 }
 
@@ -62,11 +62,7 @@ bool EcHwModel::configureHook() {
       || (number_of_servos_ != inertia_.size())
       || (number_of_servos_ != viscous_friction_.size())
       || (number_of_servos_ != current_input_.size())) {
-    std::cout
-        << std::endl
-        << RED
-        << "[error] hardware model "
-        << getName()
+    std::cout << std::endl << RED << "[error] hardware model " << getName()
         << "configuration failed: wrong properties vector length in launch file."
         << RESET << std::endl;
     return false;
@@ -101,15 +97,9 @@ void EcHwModel::updateHook() {
 //    std::cout << "HwModel updateHook" << desired_input_(1) << std::endl;
 // pytanie czy to nie przychodzi w inkrementach
     for (int servo = 0; servo < number_of_servos_; servo++) {
-      // PWM input do implementacji
-      /*
-       if (!current_input_[servo]) {  // pwm input
-       motor_position_(servo) = desired_input_(servo);
-       } else {  // current input
-       */
-
       // prad jest w miliamperach
-      desired_torque_(servo) = desired_input_(servo) * torque_constant_[servo] / input_current_multiplicator_[servo];
+      desired_torque_(servo) = desired_input_(servo) * torque_constant_[servo]
+          / input_current_multiplicator_[servo];
 
       for (int iteration = 0; iteration < iteration_per_step_; iteration++) {
         effective_torque_(servo) = desired_torque_(servo)
@@ -120,7 +110,6 @@ void EcHwModel::updateHook() {
         enc_motor_position_(servo) = motor_position_(servo) * enc_res_[servo]
             / (2.0 * M_PI);
       }
-      //}
     }
     // port_motor_position_.write(motor_position_*enc_res_/(2.0 * M_PI));
     // port_motor_position_.write(motor_position_);
