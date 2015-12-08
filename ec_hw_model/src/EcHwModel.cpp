@@ -60,8 +60,7 @@ bool EcHwModel::configureHook() {
   if ((number_of_servos_ != input_current_multiplicator_.size())
       || (number_of_servos_ != services_names_.size())
       || (number_of_servos_ != inertia_.size())
-      || (number_of_servos_ != viscous_friction_.size())
-      || (number_of_servos_ != current_input_.size())) {
+      || (number_of_servos_ != viscous_friction_.size())) {
     std::cout << std::endl << RED << "[error] hardware model " << getName()
         << "configuration failed: wrong properties vector length in launch file."
         << RESET << std::endl;
@@ -74,6 +73,7 @@ bool EcHwModel::configureHook() {
   desired_input_.resize(number_of_servos_);
   desired_torque_.resize(number_of_servos_);
   effective_torque_.resize(number_of_servos_);
+  drives_.resize(number_of_servos_);
 
   port_motor_position_.setDataSample(motor_position_);
 
@@ -89,10 +89,21 @@ bool EcHwModel::configureHook() {
 
   m_factor_ = step_per_second_ * iteration_per_step_;
 
+  // dodanie do listy drive wszystkich symulowanych napędów
+  for (int i = 0; i < number_of_servos_; i++) {
+    EcDriveModel::Ptr drive(new EcDriveModel(services_names_[i]));
+    drives_[i] = drive;
+    this->provides()->addService(drive->provides());
+  }
+
   return true;
 }
 
 void EcHwModel::updateHook() {
+  for (int i = 0; i < number_of_servos_; i++) {
+    drives_[i]->update();
+  }
+
   if (RTT::NewData == port_desired_input_.read(desired_input_)) {
 //    std::cout << "HwModel updateHook" << desired_input_(1) << std::endl;
 // pytanie czy to nie przychodzi w inkrementach

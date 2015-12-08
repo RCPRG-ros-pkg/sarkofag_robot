@@ -31,11 +31,13 @@
 #ifndef ECHWMODEL_H_
 #define ECHWMODEL_H_
 
+
 #include <rtt/TaskContext.hpp>
 #include <rtt/Port.hpp>
 #include <Eigen/Dense>
 #include <string>
 #include <vector>
+#include "EcDriveModel.h"
 
 class EcHwModel : public RTT::TaskContext {
  public:
@@ -56,6 +58,8 @@ class EcHwModel : public RTT::TaskContext {
   int number_of_servos_;
   int m_factor_;
 
+  std::vector<EcDriveModel::Ptr> drives_;
+
   // properties
   int iteration_per_step_;
   int step_per_second_;
@@ -65,7 +69,6 @@ class EcHwModel : public RTT::TaskContext {
   std::vector<double> input_current_multiplicator_;
   std::vector<double> inertia_;
   std::vector<double> viscous_friction_;
-  std::vector<bool> current_input_;
 };
 
 #endif  // ECHWMODEL_H_
