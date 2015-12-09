@@ -31,6 +31,12 @@ SarkEcHwModel.rosparam.getAll()
 SarkEcHwModel.rosparam.getParam("~/SarkofagMotorParameters/enc_res", "enc_res")
 SarkEcHwModel.configure()
 
+loadComponent("ECManager","ECManager")
+setActivity("ECManager", 0.1, 4, ORO_SCHED_RT);
+ECManager.loadService("rosparam")
+ECManager.rosparam.getAll()
+ECManager.configure()
+
 loadComponent("SarkofagIM2RM","IM2RM")
 SarkofagIM2RM.loadService("rosparam")
 SarkofagIM2RM.rosparam.getAll()
@@ -145,6 +151,8 @@ addPeer("SarkScheme", "SarkofagJ2M");
 addPeer("SarkScheme", "SarkofagSplineTrajectoryGeneratorJoint");
 addPeer("SarkScheme", "SarkofagSplineTrajectoryGeneratorMotor");
 
+addPeer("ECManager", "SarkEcHwModel");
+addPeer("ECManager", "SarkScheme");
 
 SarkScheme.addBlock("SarkEcHwModel");
 SarkScheme.addBlock("SarkofagIM2RM");
@@ -225,7 +233,7 @@ SarkofagJntPub.configure()
 
 SarkScheme.start()
 
-SarkofagRegulator.start()
+//SarkofagRegulator.start()
 SarkofagPortDoubleSplit_hw_cp.start()
 SarkofagPortDoubleSplit_hw_to_reg.start()
 SarkofagLimitDetector.start()

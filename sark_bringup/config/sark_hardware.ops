@@ -7,7 +7,7 @@ runScript( ros.find("sark_bringup") + "/config/common-imports.ops")
 
 ros.import("ec_hardware")
 ros.import("ec_drivers")
-ros.import("ec_manager")
+
 
 
 loadComponent("EC","ECHardware")
