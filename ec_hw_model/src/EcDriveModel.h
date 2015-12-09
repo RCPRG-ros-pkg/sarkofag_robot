@@ -39,6 +39,27 @@
 
 class EcDriveModel {
  public:
+  enum ControlMode {
+    PROFILE_POSITION = 1,
+    PROFILE_VELOCITY = 2,
+    PROFILE_CURRENT = 3,
+    HOMING = 6,
+    CYCLIC_CURRENT = 10,
+    CYCLIC_VELOCITY = 9,
+    CYCLIC_POSITION = 8
+  };
+  enum ServoState {
+    INVALID = 0,
+    NOT_READY_TO_SWITCH_ON = 1,
+    SWITCH_ON_DISABLED = 2,
+    READY_TO_SWITCH_ON = 3,
+    SWITCH_ON = 4,
+    OPERATION_ENABLED = 5,
+    QUICK_STOP_ACTIVE = 6,
+    FAULT_REACTION_ACTIVE = 7,
+    FAULT = 8
+  };
+
   typedef boost::shared_ptr<EcDriveModel> Ptr;
 
   explicit EcDriveModel(const std::string &name, int iteration_per_step,
@@ -56,6 +77,11 @@ class EcDriveModel {
   RTT::InputPort<double> port_desired_input_;
   RTT::OutputPort<double> port_motor_position_;
 
+  bool enable();
+  void disable();
+  bool beginHoming();
+  bool resetFault();
+
  protected:
   RTT::Service::shared_ptr service_;
   double enc_motor_position_, motor_position_, motor_velocity_,
@@ -65,6 +91,13 @@ class EcDriveModel {
   int m_factor_;
   double enc_res_, torque_constant_, input_current_multiplicator_, inertia_,
       viscous_friction_;
+
+  ControlMode control_mode_;
+  ServoState state_;
+  bool enable_;
+  bool homing_;
+  bool reset_fault_;
+  bool homing_done_;
 };
 
 #endif  // ECDRIVEMODEL_H_

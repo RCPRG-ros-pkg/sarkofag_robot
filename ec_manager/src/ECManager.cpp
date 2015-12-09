@@ -29,14 +29,14 @@
  */
 
 #include "ECManager.h"
-
+#include <vector>
 #include <string>
 
-
 ECManager::ECManager(const std::string& name)
-: TaskContext(name),
-  state_(NOT_SYNCHRONIZED) {
-
+    : TaskContext(name),
+      state_(NOT_SYNCHRONIZED) {
+  this->addProperty("hal_component_name", hal_component_name_).doc("");
+  this->addProperty("scheme_component_name", scheme_component_name_).doc("");
   this->addProperty("debug", debug_).doc("");
   this->addProperty("service", service_).doc("");
   this->addProperty("regulator", regulator_).doc("");
@@ -46,12 +46,18 @@ ECManager::~ECManager() {
 }
 
 bool ECManager::configureHook() {
+
+  if (hal_component_name_.empty() || scheme_component_name_.empty()) {
+    return false;
+  }
+
+  return true;
 }
 
 bool ECManager::startHook() {
 
-  EC = RTT::TaskContext::getPeer("EC");
-  Scheme = RTT::TaskContext::getPeer("SarkScheme");
+  EC = RTT::TaskContext::getPeer(hal_component_name_);
+  Scheme = RTT::TaskContext::getPeer(scheme_component_name_);
 
   if (debug_) {
     std::cout << "EC_active:" << EC->isActive() << std::endl;
@@ -59,14 +65,16 @@ bool ECManager::startHook() {
     std::cout << "Scheme_active:" << Scheme->isActive() << std::endl;
     std::cout << "Scheme_running:" << Scheme->isRunning() << std::endl;
 
-    std::cout <<  EC->provides(service_)  << std::endl;
-    std::vector<std::string> att_vec = EC->provides(service_)->getAttributeNames();
-    std::vector<std::string> ope_vec = EC->provides(service_)->getOperationNames();
+    std::cout << EC->provides(service_) << std::endl;
+    std::vector < std::string > att_vec = EC->provides(service_)
+        ->getAttributeNames();
+    std::vector < std::string > ope_vec = EC->provides(service_)
+        ->getOperationNames();
 
-    for (int i=0; i<ope_vec.size(); i++) {
+    for (int i = 0; i < ope_vec.size(); i++) {
       std::cout << service_ << "." << ope_vec[i] << std::endl;
     }
-    for (int i=0; i<att_vec.size(); i++) {
+    for (int i = 0; i < att_vec.size(); i++) {
       std::cout << service_ << "." << att_vec[i] << std::endl;
     }
   }
@@ -75,9 +83,10 @@ bool ECManager::startHook() {
 }
 
 void ECManager::updateHook() {
-
-  RTT::Attribute<ServoState> * servo_state = (RTT::Attribute<ServoState> *) EC->provides(service_)->getAttribute("state");
-  RTT::Attribute<State> * homing = (RTT::Attribute<State> *) EC->provides(service_)->getAttribute("homing_done");
+  RTT::Attribute<ServoState> * servo_state = (RTT::Attribute<ServoState> *) EC
+      ->provides(service_)->getAttribute("state");
+  RTT::Attribute<State> * homing = (RTT::Attribute<State> *) EC->provides(
+      service_)->getAttribute("homing_done");
 
   servo_state_ = servo_state->get();
 
@@ -89,13 +98,12 @@ void ECManager::updateHook() {
   RTT::OperationCaller<bool(void)> enable;
   RTT::OperationCaller<bool(void)> resetFault;
   RTT::OperationCaller<bool(void)> beginHoming;
-  RTT::OperationCaller<bool(const std::vector<std::string> &disable_block_names,
-                            const std::vector<std::string> &enable_block_names,
-                            const bool strict,
-                            const bool force)> switchBlocks;
+  RTT::OperationCaller<
+      bool(const std::vector<std::string> &disable_block_names,
+           const std::vector<std::string> &enable_block_names,
+           const bool strict, const bool force)> switchBlocks;
 
   switch (servo_state_) {
-
     case INVALID:
       break;
 
@@ -117,53 +125,48 @@ void ECManager::updateHook() {
     case OPERATION_ENABLED:
 
       switch (state_) {
-
         case NOT_SYNCHRONIZED:
           beginHoming = EC->provides(service_)->getOperation("beginHoming");
           beginHoming.setCaller(this->engine());
           beginHoming();
           state_ = SYNCHRONIZING;
           break;
-
         case SYNCHRONIZING:
-            if (homing->get()) state_ = SYNCHRONIZED;
+          if (homing->get())
+            state_ = SYNCHRONIZED;
           break;
-
         case SYNCHRONIZED:
           disable_vec_.clear();
           enable_vec_.clear();
           enable_vec_.push_back(regulator_);
           switchBlocks = Scheme->getOperation("switchBlocks");
           switchBlocks.setCaller(this->engine());
-          switchBlocks(disable_vec_,enable_vec_,true,true);
+          switchBlocks(disable_vec_, enable_vec_, true, true);
           state_ = RUNNING;
           break;
-
         case RUNNING:
           break;
-
         default:
           break;
       }
 
       break;
 
-        case QUICK_STOP_ACTIVE:
-          break;
+    case QUICK_STOP_ACTIVE:
+      break;
 
-        case FAULT_REACTION_ACTIVE:
-          break;
+    case FAULT_REACTION_ACTIVE:
+      break;
 
-        case FAULT:
-          resetFault = EC->provides(service_)->getOperation("resetFault");
-          resetFault.setCaller(this->engine());
-          std::cout << resetFault() << std::endl;
-          break;
+    case FAULT:
+      resetFault = EC->provides(service_)->getOperation("resetFault");
+      resetFault.setCaller(this->engine());
+      std::cout << resetFault() << std::endl;
+      break;
 
-        default:
-          break;
+    default:
+      break;
   }
-
 }
 
 ORO_CREATE_COMPONENT(ECManager)

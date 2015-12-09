@@ -53,12 +53,29 @@ EcDriveModel::EcDriveModel(const std::string &name, int iteration_per_step,
       torque_constant_(torque_constant),
       input_current_multiplicator_(input_current_multiplicator),
       inertia_(inertia),
-      viscous_friction_(viscous_friction) {
+      viscous_friction_(viscous_friction),
+      control_mode_(HOMING),
+      enable_(false),
+      homing_(false),
+      reset_fault_(false),
+      homing_done_(false),
+      state_(SWITCH_ON) {
   this->provides()->addPort("MotorPosition", port_motor_position_);
   this->provides()->addPort("DesiredInput", port_desired_input_);
 
-  m_factor_ = step_per_second_ * iteration_per_step_;
+  this->provides()->addAttribute("state", *((int*) &state_));
+  this->provides()->addAttribute("homing_done", homing_done_);
 
+  this->provides()->addOperation("beginHoming", &EcDriveModel::beginHoming,
+                                 this, RTT::OwnThread);
+  this->provides()->addOperation("enable", &EcDriveModel::enable, this,
+                                 RTT::OwnThread);
+  this->provides()->addOperation("disable", &EcDriveModel::disable, this,
+                                 RTT::OwnThread);
+  this->provides()->addOperation("resetFault", &EcDriveModel::resetFault, this,
+                                 RTT::OwnThread);
+
+  m_factor_ = step_per_second_ * iteration_per_step_;
 }
 
 EcDriveModel::~EcDriveModel() {
@@ -89,4 +106,38 @@ void EcDriveModel::update() {
   }
   // std::cout << "EcDriveModel updateHook: " << enc_motor_position_ << std::endl;
   port_motor_position_.write(enc_motor_position_);
+}
+
+bool EcDriveModel::enable() {
+  if (state_ == SWITCH_ON) {
+    state_ = OPERATION_ENABLED;
+    enable_ = true;
+  }
+}
+
+void EcDriveModel::disable() {
+  if (enable_) {
+    enable_ = false;
+  }
+}
+
+bool EcDriveModel::beginHoming() {
+  if (homing_done_ == false) {
+    if (state_ == OPERATION_ENABLED) {
+      homing_= true;
+      homing_done_ = true;
+    }
+  } else {
+    RTT::log(RTT::Error) << "Drive not configured for homing" << RTT::endlog();
+  }
+  return homing_;
+}
+
+bool EcDriveModel::resetFault() {
+  if (state_ == FAULT) {
+    reset_fault_ = true;
+    return true;
+  } else {
+    return false;
+  }
 }

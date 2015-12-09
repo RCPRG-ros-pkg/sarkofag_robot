@@ -2,6 +2,11 @@
 
   <group>
     <rosparam>
+      ECManager:
+        debug: false
+        service: sarkofag
+        regulator: SarkofagRegulator
+        scheme_component_name: SarkScheme
       SarkDiag:
         hardware_label: Sarkofag
       SarkScheme:

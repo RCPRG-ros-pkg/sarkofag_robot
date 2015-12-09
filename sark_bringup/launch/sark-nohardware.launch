@@ -22,6 +22,8 @@
 
   <group ns="SARK_OROCOS_ROBOT">
     <rosparam>
+      ECManager:
+        hal_component_name: SarkEcHwModel
       SarkEcHwModel:
         iteration_per_step: 1
         step_per_second: 500

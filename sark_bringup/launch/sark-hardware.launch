@@ -24,11 +24,7 @@
     <param name="EC/master_config" command="cat $(find sark_bringup)/config/master_config.yaml"/>
     <rosparam>
       ECManager:
-        debug: false
-        service: sarkofag
-        regulator: SarkofagRegulator
-      SarkofagPortDoubleAggregate_im2rm:
-        number_of_ports: 1
+        hal_component_name: EC
     </rosparam>
   </group>
 
