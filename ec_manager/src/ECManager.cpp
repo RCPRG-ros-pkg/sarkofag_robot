@@ -46,7 +46,6 @@ ECManager::~ECManager() {
 }
 
 bool ECManager::configureHook() {
-
   if (hal_component_name_.empty() || scheme_component_name_.empty()) {
     return false;
   }
@@ -55,7 +54,6 @@ bool ECManager::configureHook() {
 }
 
 bool ECManager::startHook() {
-
   EC = RTT::TaskContext::getPeer(hal_component_name_);
   Scheme = RTT::TaskContext::getPeer(scheme_component_name_);
 

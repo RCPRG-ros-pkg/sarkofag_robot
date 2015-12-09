@@ -45,7 +45,7 @@
 
 #include <Eigen/Dense>
 #include <string>
-
+#include <vector>
 
 typedef enum {
   NOT_SYNCHRONIZED,
@@ -76,10 +76,8 @@ typedef enum {
   FAULT = 8
 } ServoState;
 
-
 class ECManager : public RTT::TaskContext {
  private:
-
   TaskContext * EC;
   TaskContext * Scheme;
 

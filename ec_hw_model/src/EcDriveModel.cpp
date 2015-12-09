@@ -63,7 +63,7 @@ EcDriveModel::EcDriveModel(const std::string &name, int iteration_per_step,
   this->provides()->addPort("MotorPosition", port_motor_position_);
   this->provides()->addPort("DesiredInput", port_desired_input_);
 
-  this->provides()->addAttribute("state", *((int*) &state_));
+  this->provides()->addAttribute("state", *(reinterpret_cast<int*>(&state_)));
   this->provides()->addAttribute("homing_done", homing_done_);
 
   this->provides()->addOperation("beginHoming", &EcDriveModel::beginHoming,
@@ -87,10 +87,6 @@ RTT::Service::shared_ptr EcDriveModel::provides() {
 
 void EcDriveModel::update() {
   if (RTT::NewData == port_desired_input_.read(desired_input_)) {
-    //  std::cout << "EcDriveModel updateHook: " << desired_input_ << std::endl;
-    // pytanie czy to nie przychodzi w inkrementach
-
-    // prad jest w miliamperach
     desired_torque_ = desired_input_ * torque_constant_
         / input_current_multiplicator_;
 
@@ -101,10 +97,7 @@ void EcDriveModel::update() {
       motor_position_ += motor_velocity_ / m_factor_;
       enc_motor_position_ = motor_position_ * enc_res_ / (2.0 * M_PI);
     }
-    // port_motor_position_.write(motor_position_*enc_res_/(2.0 * M_PI));
-    // port_motor_position_.write(motor_position_);
   }
-  // std::cout << "EcDriveModel updateHook: " << enc_motor_position_ << std::endl;
   port_motor_position_.write(enc_motor_position_);
 }
 
@@ -124,7 +117,7 @@ void EcDriveModel::disable() {
 bool EcDriveModel::beginHoming() {
   if (homing_done_ == false) {
     if (state_ == OPERATION_ENABLED) {
-      homing_= true;
+      homing_ = true;
       homing_done_ = true;
     }
   } else {
