@@ -1,0 +1,103 @@
+
+
+
+addPeer("SarkScheme", "SarkofagIM2RM");
+addPeer("SarkScheme", "SarkofagPortDoubleSplit_hw_cp")
+addPeer("SarkScheme", "SarkofagPortDoubleSplit_hw_to_reg")
+addPeer("SarkScheme", "SarkofagPortDoubleAggregate_im2rm")
+addPeer("SarkScheme", "SarkofagLimitDetector")
+addPeer("SarkScheme", "SarkofagM2J");
+addPeer("SarkScheme", "SarkofagJ2M");
+addPeer("SarkScheme", "SarkofagSplineTrajectoryGeneratorJoint");
+addPeer("SarkScheme", "SarkofagSplineTrajectoryGeneratorMotor");
+
+
+addPeer("ECManager", "SarkScheme");
+
+
+SarkScheme.addBlock("SarkofagIM2RM");
+SarkScheme.addBlock("SarkofagPortDoubleSplit_hw_cp")
+SarkScheme.addBlock("SarkofagPortDoubleSplit_hw_to_reg")
+SarkScheme.addBlock("SarkofagLimitDetector")
+SarkScheme.addBlock("SarkofagPortDoubleAggregate_im2rm")
+SarkScheme.addBlock("SarkofagM2J");
+SarkScheme.addBlock("SarkofagJ2M");
+SarkScheme.addBlock("SarkofagSplineTrajectoryGeneratorJoint");
+SarkScheme.addBlock("SarkofagSplineTrajectoryGeneratorMotor");
+
+
+
+//
+// SarkofagSplineTrajectoryActionJoint
+// 
+
+loadComponent("SarkofagSplineTrajectoryActionJoint", "InternalSpaceSplineTrajectoryAction")
+setActivity("SarkofagSplineTrajectoryActionJoint",0.01 ,2 ,ORO_SCHED_RT)
+SarkofagSplineTrajectoryActionJoint.loadService("rosparam");
+SarkofagSplineTrajectoryActionJoint.rosparam.getAll();
+
+SarkofagSplineTrajectoryActionJoint.loadService("actionlib")
+SarkofagSplineTrajectoryActionJoint.actionlib.connect("/sarkofag/spline_trajectory_action_joint")
+
+connect("SarkofagSplineTrajectoryActionJoint.trajectoryPtr","SarkofagSplineTrajectoryGeneratorJoint.trajectoryPtr", ConnPolicy())
+connect("SarkofagM2J.JointPosition","SarkofagSplineTrajectoryActionJoint.JointPosition", ConnPolicy())
+connect("SarkofagSplineTrajectoryGeneratorJoint.JointPositionCommand","SarkofagSplineTrajectoryActionJoint.JointPositionCommand", ConnPolicy())
+
+
+SarkofagSplineTrajectoryActionJoint.configure()
+
+
+//
+// SarkofagSplineTrajectoryActionMotor
+// 
+
+loadComponent("SarkofagSplineTrajectoryActionMotor", "InternalSpaceSplineTrajectoryAction")
+setActivity("SarkofagSplineTrajectoryActionMotor",0.01 ,2 ,ORO_SCHED_RT)
+SarkofagSplineTrajectoryActionMotor.loadService("rosparam");
+SarkofagSplineTrajectoryActionMotor.rosparam.getAll();
+SarkofagSplineTrajectoryActionMotor.rosparam.getParam("~/SarkofagMotorParameters/upper_limits", "upper_limits")
+SarkofagSplineTrajectoryActionMotor.rosparam.getParam("~/SarkofagMotorParameters/lower_limits", "lower_limits")
+SarkofagSplineTrajectoryActionMotor.loadService("actionlib")
+SarkofagSplineTrajectoryActionMotor.actionlib.connect("/sarkofag/spline_trajectory_action_motor")
+
+connect("SarkofagSplineTrajectoryActionMotor.trajectoryPtr","SarkofagSplineTrajectoryGeneratorMotor.trajectoryPtr", ConnPolicy())
+connect("SarkofagIM2RM.RadianMotorPosition","SarkofagSplineTrajectoryActionMotor.JointPosition", ConnPolicy())
+connect("SarkofagSplineTrajectoryGeneratorMotor.JointPositionCommand","SarkofagSplineTrajectoryActionMotor.JointPositionCommand", ConnPolicy())
+
+
+
+
+SarkofagSplineTrajectoryActionMotor.configure()
+
+loadComponent("SarkofagJntPub", "JointStatePublisher");
+setActivity("SarkofagJntPub", 0.01, 2, ORO_SCHED_RT);
+SarkofagJntPub.loadService("rosparam");
+SarkofagJntPub.rosparam.getAll();
+
+connect("SarkofagM2J.JointPosition", "SarkofagJntPub.JointPosition", ConnPolicy());
+connect("SarkofagM2J.JointPosition", "SarkofagJntPub.JointVelocity", ConnPolicy());
+connect("SarkofagM2J.JointPosition", "SarkofagJntPub.JointEffort", ConnPolicy());
+
+stream("SarkofagJntPub.joint_state", ros.comm.topic("sarkofag/joint_states"));
+stream("SarkofagJntPub.joint_state", ros.comm.topic("/joint_states"));
+
+SarkofagJntPub.configure()
+
+
+
+
+SarkScheme.start()
+
+//SarkofagRegulator.start()
+SarkofagPortDoubleSplit_hw_cp.start()
+SarkofagPortDoubleSplit_hw_to_reg.start()
+SarkofagLimitDetector.start()
+SarkofagPortDoubleAggregate_im2rm.start()
+SarkofagM2J.start()
+SarkofagJ2M.start()
+SarkofagSplineTrajectoryActionJoint.start()
+SarkofagSplineTrajectoryActionMotor.start()
+SarkofagJntPub.start()
+
+SarkofagIM2RM.start()
+SarkDiag.start()

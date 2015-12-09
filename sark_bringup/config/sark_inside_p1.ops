@@ -1,0 +1,111 @@
+
+//------------------------------------------------------------------------------
+//-- Controller manager
+//------------------------------------------------------------------------------
+loadComponent("SarkScheme", "conman::Scheme");
+setActivity("SarkScheme", 0.002, 5, ORO_SCHED_RT);
+SarkScheme.loadService("rosparam")
+SarkScheme.rosparam.getAll()
+SarkScheme.loadService("conman_ros")
+SarkScheme.configure()
+
+
+loadComponent("SarkDiag", "SarkDiagnostic")
+setActivity("SarkDiag", 0.1, 1, ORO_SCHED_RT)
+SarkDiag.loadService("rosparam");
+SarkDiag.rosparam.getAll();
+
+stream("SarkDiag.Diagnostics", ros.comm.topic("/diagnostics"));
+SarkDiag.configure()
+
+
+
+
+loadComponent("ECManager","ECManager")
+setActivity("ECManager", 0.1, 4, ORO_SCHED_RT);
+ECManager.loadService("rosparam")
+ECManager.rosparam.getAll()
+ECManager.configure()
+
+loadComponent("SarkofagIM2RM","IM2RM")
+SarkofagIM2RM.loadService("rosparam")
+SarkofagIM2RM.rosparam.getAll()
+SarkofagIM2RM.rosparam.getParam("~/SarkofagMotorParameters/enc_res", "enc_res")
+SarkofagIM2RM.configure()
+
+
+loadComponent("SarkofagLimitDetector","LimitDetector")
+SarkofagLimitDetector.loadService("rosparam")
+SarkofagLimitDetector.rosparam.getAll()
+SarkofagLimitDetector.rosparam.getParam("~/SarkofagMotorParameters/upper_limits", "upper_limits")
+SarkofagLimitDetector.rosparam.getParam("~/SarkofagMotorParameters/lower_limits", "lower_limits")
+SarkofagLimitDetector.configure()
+
+
+// Motors Regulators
+
+
+loadComponent("SarkofagRegulator","SarkRegulator")
+SarkofagRegulator.loadService("rosparam")
+SarkofagRegulator.rosparam.getAll()
+SarkofagRegulator.configure()
+
+
+// Sarkofag double port spliter
+
+loadComponent("SarkofagPortDoubleSplit_hw_cp","PortDoubleSplit")
+SarkofagPortDoubleSplit_hw_cp.loadService("rosparam")
+SarkofagPortDoubleSplit_hw_cp.rosparam.getAll()
+SarkofagPortDoubleSplit_hw_cp.configure()
+
+// Sarkofag double port spliter hw_to_reg
+
+loadComponent("SarkofagPortDoubleSplit_hw_to_reg","PortDoubleSplit")
+SarkofagPortDoubleSplit_hw_to_reg.loadService("rosparam")
+SarkofagPortDoubleSplit_hw_to_reg.rosparam.getAll()
+SarkofagPortDoubleSplit_hw_to_reg.configure()
+
+loadComponent("SarkofagPortDoubleAggregate_im2rm","PortDoubleAggregate")
+SarkofagPortDoubleAggregate_im2rm.loadService("rosparam")
+SarkofagPortDoubleAggregate_im2rm.rosparam.getAll()
+SarkofagPortDoubleAggregate_im2rm.configure()
+
+
+// SarkofagM2J
+
+loadComponent("SarkofagM2J","SarkofagM2J")
+SarkofagM2J.configure()
+
+// SarkofagJ2M
+
+loadComponent("SarkofagJ2M","SarkofagJ2M")
+SarkofagJ2M.configure()
+
+
+// SarkofagSplineTrajectoryGeneratorJoint
+
+loadComponent("SarkofagSplineTrajectoryGeneratorJoint", "InternalSpaceSplineTrajectoryGenerator")
+SarkofagSplineTrajectoryGeneratorJoint.loadService("rosparam");
+SarkofagSplineTrajectoryGeneratorJoint.rosparam.getAll();
+connect("SarkofagM2J.JointPosition","SarkofagSplineTrajectoryGeneratorJoint.JointPosition", ConnPolicy())
+connect("SarkofagSplineTrajectoryGeneratorJoint.JointPositionCommand","SarkofagJ2M.JointPosition", ConnPolicy())
+SarkofagSplineTrajectoryGeneratorJoint.configure()
+
+
+// SarkofagSplineTrajectoryGeneratorMotor
+
+loadComponent("SarkofagSplineTrajectoryGeneratorMotor", "InternalSpaceSplineTrajectoryGenerator")
+SarkofagSplineTrajectoryGeneratorMotor.loadService("rosparam");
+SarkofagSplineTrajectoryGeneratorMotor.rosparam.getAll();
+
+connect("SarkofagLimitDetector.OutputPort","SarkofagPortDoubleSplit_hw_cp.InputPort", ConnPolicy())
+
+connect("SarkofagIM2RM.RadianMotorPosition","SarkofagSplineTrajectoryGeneratorMotor.JointPosition", ConnPolicy())
+connect("SarkofagSplineTrajectoryGeneratorMotor.JointPositionCommand","SarkofagLimitDetector.InputPort", ConnPolicy())
+SarkofagSplineTrajectoryGeneratorMotor.configure()
+connect("SarkofagIM2RM.IncrementalMotorPosition","SarkofagPortDoubleAggregate_im2rm.OutputPort", ConnPolicy())
+connect("SarkofagIM2RM.RadianMotorPosition","SarkofagM2J.MotorPosition", ConnPolicy())
+connect("SarkofagJ2M.MotorPosition", "SarkofagLimitDetector.InputPort", ConnPolicy())
+connect("SarkofagPortDoubleSplit_hw_cp.OutputPort_0","SarkofagRegulator.DesiredPosition", ConnPolicy())
+
+
