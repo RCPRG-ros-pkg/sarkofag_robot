@@ -159,7 +159,7 @@ void ECManager::updateHook() {
     case FAULT:
       resetFault = EC->provides(service_)->getOperation("resetFault");
       resetFault.setCaller(this->engine());
-      std::cout << resetFault() << std::endl;
+      resetFault();
       break;
 
     default:
