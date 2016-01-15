@@ -61,12 +61,12 @@
         max_output_current: 20
         max_desired_increment: 2000.0
         enc_res: 20000.0
-        KP_POS: 56.551942454832050
-        TI_POS: 39.284532385221590
-        TD_POS: 0.039012248063923
-        KP_INC: 0.890242379819815
-        TI_INC: 360.1924908049028
-        TD_INC: 0.001262394913177
+        KP_POS: 25.681383681535774
+        TI_POS: 27.1003051852354
+        TD_POS: 0.003075107148591
+        KP_INC: 2.830111189184168
+        TI_INC: 558020.6527002241
+        TD_INC: 0.000235395999585
       SarkofagPortDoubleSplit_hw_to_reg:
         number_of_ports: 1
       SarkofagPortDoubleSplit_hw_cp:

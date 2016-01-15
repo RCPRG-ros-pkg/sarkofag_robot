@@ -140,7 +140,6 @@ bool CascadeRegulator::configureHook() {
 }
 
 void CascadeRegulator::updateHook() {
-
   bool new_data = false;
   if (RTT::NewData == deltaInc_in.read(measured_increment_new_)) {
     new_data = true;
@@ -192,6 +191,12 @@ void CascadeRegulator::updateHook() {
 int CascadeRegulator::doServo_cas(double position_desired, double position, int increment) {
   // algorytm regulacji
 
+  position = position / (enc_res_ / (2.0 * M_PI));
+
+  if (debug_) {
+    std::cout << position_desired <<";"<< position <<";"<< increment << std::endl;
+  }
+
   position_err_new = position_desired - position;
 
   position_set_value_new = position_set_value_old + position_err_new * r0_pos +
@@ -221,7 +226,7 @@ int CascadeRegulator::doServo_cas(double position_desired, double position, int 
     output_value = increment_set_value_new;
   }
 
-  if (true) {
+  if (debug_) {
     std::cout << position_err_new <<";"<< position_set_value_new <<";"<< increment_err_new <<";"
         << increment_set_value_new <<";"<<  output_value << std::endl;
   }
