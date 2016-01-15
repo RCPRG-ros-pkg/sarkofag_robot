@@ -154,7 +154,7 @@ void SarkRegulator::updateHook() {
     desired_position_old_ = desired_position_new_;
 
     int output;
-    if (synchro_state_old_ && ft_) {
+    if (ft_) {
       output = doServo_friction_test(0.0, deltaIncData);
     } else {
       output = doServo(desired_position_increment_, deltaIncData);
