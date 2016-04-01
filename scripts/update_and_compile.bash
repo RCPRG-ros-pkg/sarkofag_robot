@@ -2,7 +2,7 @@
 # Skrypt powinien być wołan z katalogu robot/src/sarkofag_robot/scripts
 
 
-source /opt/ros/indigo/setup.bash
+source /opt/ros/jade/setup.bash
 export LANG=en_US.UTF-8
 export LANG=en
 

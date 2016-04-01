@@ -9,6 +9,6 @@ foreach(dir config launch)
       DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/${dir})
 endforeach(dir)
 
- install(PROGRAMS scripts/sark_multi_trajectory.py scripts/sark_simple_trajectory.py scripts/sark_synchro_joint.py scripts/sark_synchro_motor		.py
+ install(PROGRAMS scripts/sark_multi_trajectory.py scripts/sark_simple_trajectory.py scripts/sark_synchro_joint.py scripts/sark_synchro_motor.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
