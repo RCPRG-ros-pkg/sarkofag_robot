@@ -14,3 +14,4 @@ cd $1
 wstool init
 
 bash /tmp/update_and_compile.bash
+touch $1/robot/src/sarkofag_robot/scripts/hardware
