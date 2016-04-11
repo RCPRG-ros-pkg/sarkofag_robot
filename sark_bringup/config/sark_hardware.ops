@@ -5,8 +5,6 @@ runScript( ros.find("sark_bringup") + "/config/common-imports.ops")
 ros.import("ec_hardware")
 ros.import("ec_drivers")
 
-
-
 loadComponent("EC","ECHardware")
 setActivityOnCPU("EC", 0.001, 6, ORO_SCHED_RT, 3)
 EC.loadService("rosparam")
@@ -16,18 +14,18 @@ EC.configure();
 
 runScript( ros.find("sark_bringup") + "/config/sark_inside_p1.ops")
 
-
 connect("EC.sarkofag.motor_current_command","SarkofagRegulator.computedPwm_out", ConnPolicy())
 connect("SarkofagPortDoubleAggregate_im2rm.InputPort_0","EC.sarkofag.motor_position", ConnPolicy())
 connect("SarkofagRegulator.MeasuredPosition","EC.sarkofag.motor_position", ConnPolicy())
 
-
 addPeer("ECManager", "EC");
+
+
+
 addPeer("SarkScheme", "SarkofagRegulator");
 SarkScheme.addBlock("SarkofagRegulator")
 
 
 runScript( ros.find("sark_bringup") + "/config/sark_inside_p2.ops")
-
 
 EC.start()
