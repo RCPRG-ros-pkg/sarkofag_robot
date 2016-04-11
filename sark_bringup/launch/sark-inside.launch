@@ -5,8 +5,8 @@
       ECManager:
         debug: false
         fault_autoreset: true
-        service: sarkofag
-        regulator: SarkofagRegulator
+        services_names: [sarkofag]
+        regulators_names: [SarkofagRegulator]
         scheme_component_name: SarkScheme
       SarkDiag:
         hardware_label: Sarkofag
