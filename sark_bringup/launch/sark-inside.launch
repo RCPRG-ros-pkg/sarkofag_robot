@@ -4,8 +4,9 @@
     <rosparam>
       ECManager:
         debug: false
-        service: sarkofag
-        regulator: SarkofagRegulator
+        fault_autoreset: true
+        services_names: [sarkofag]
+        regulators_names: [SarkofagRegulator]
         scheme_component_name: SarkScheme
       SarkDiag:
         hardware_label: Sarkofag
