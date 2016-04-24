@@ -1,7 +1,7 @@
 <launch>
 
-  <param name="robot_description" command="$(find xacro)/xacro.py '$(find sark_description)/robots/sarkofag.urdf.xacro'" />
- 
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find sark_description)/robots/sarkofag.urdf.xacro'" />
+  
   <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher"/>
   
   <node pkg="diagnostic_aggregator" type="aggregator_node"

@@ -14,9 +14,9 @@ SarkEcHwModel.configure()
 
 runScript( ros.find("sark_bringup") + "/config/sark_inside_p1.ops")
 
-connect("SarkEcHwModel.sarkofag.DesiredInput","SarkofagRegulator.computedPwm_out", ConnPolicy())
-connect("SarkofagPortDoubleAggregate_im2rm.InputPort_0","SarkEcHwModel.sarkofag.MotorPosition", ConnPolicy())
-connect("SarkofagRegulator.MeasuredPosition","SarkEcHwModel.sarkofag.MotorPosition", ConnPolicy())
+connect("SarkEcHwModel.sarkofag.motor_current_command","SarkofagRegulator.computedPwm_out", ConnPolicy())
+connect("SarkofagPortDoubleAggregate_im2rm.InputPort_0","SarkEcHwModel.sarkofag.motor_position", ConnPolicy())
+connect("SarkofagRegulator.MeasuredPosition","SarkEcHwModel.sarkofag.motor_position", ConnPolicy())
 
 addPeer("SarkScheme", "SarkEcHwModel");
 addPeer("ECManager", "SarkEcHwModel");
