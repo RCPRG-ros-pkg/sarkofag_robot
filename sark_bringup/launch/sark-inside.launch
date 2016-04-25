@@ -2,10 +2,10 @@
 
   <group>
     <rosparam>
-      ECManager:
+      SarkManager:
         debug: false
         fault_autoreset: true
-        sequent_synchro: true
+        autostart: true
         services_names: [sarkofag]
         regulators_names: [SarkofagRegulator]
         scheme_component_name: SarkScheme

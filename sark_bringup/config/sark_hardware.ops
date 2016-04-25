@@ -18,7 +18,7 @@ connect("EC.sarkofag.motor_current_command","SarkofagRegulator.computedPwm_out",
 connect("SarkofagPortDoubleAggregate_im2rm.InputPort_0","EC.sarkofag.motor_position", ConnPolicy())
 connect("SarkofagRegulator.MeasuredPosition","EC.sarkofag.motor_position", ConnPolicy())
 
-addPeer("ECManager", "EC");
+addPeer("SarkManager", "EC");
 
 
 
@@ -29,3 +29,4 @@ SarkScheme.addBlock("SarkofagRegulator")
 runScript( ros.find("sark_bringup") + "/config/sark_inside_p2.ops")
 
 EC.start()
+SarkManager.start()

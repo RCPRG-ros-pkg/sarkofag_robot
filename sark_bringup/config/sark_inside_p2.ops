@@ -12,7 +12,7 @@ addPeer("SarkScheme", "SarkofagSplineTrajectoryGeneratorJoint");
 addPeer("SarkScheme", "SarkofagSplineTrajectoryGeneratorMotor");
 
 
-addPeer("ECManager", "SarkScheme");
+addPeer("SarkManager", "SarkScheme");
 
 
 SarkScheme.addBlock("SarkofagIM2RM");

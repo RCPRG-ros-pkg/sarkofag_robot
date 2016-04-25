@@ -19,7 +19,7 @@ connect("SarkofagPortDoubleAggregate_im2rm.InputPort_0","SarkEcHwModel.sarkofag.
 connect("SarkofagRegulator.MeasuredPosition","SarkEcHwModel.sarkofag.motor_position", ConnPolicy())
 
 addPeer("SarkScheme", "SarkEcHwModel");
-addPeer("ECManager", "SarkEcHwModel");
+addPeer("SarkManager", "SarkEcHwModel");
 SarkScheme.addBlock("SarkEcHwModel");
 
 addPeer("SarkScheme", "SarkofagRegulator");
@@ -29,3 +29,4 @@ SarkScheme.latchConnections("SarkofagRegulator", "SarkEcHwModel", true);
 runScript( ros.find("sark_bringup") + "/config/sark_inside_p2.ops")
 
 SarkEcHwModel.start()
+SarkManager.start()
