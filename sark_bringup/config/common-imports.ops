@@ -24,4 +24,4 @@ ros.import("internal_space_spline_trajectory_generator")
 ros.import("controller_common")
 
 ros.import("sark_kinematic")
-ros.import("ec_manager")
+ros.import("sark_manager")

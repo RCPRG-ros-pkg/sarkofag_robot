@@ -21,11 +21,11 @@ SarkDiag.configure()
 
 
 
-loadComponent("ECManager","ECManager")
-setActivity("ECManager", 0.1, 4, ORO_SCHED_RT);
-ECManager.loadService("rosparam")
-ECManager.rosparam.getAll()
-ECManager.configure()
+loadComponent("SarkManager","SarkofagManager")
+setActivity("SarkManager", 0.1, 4, ORO_SCHED_RT);
+SarkManager.loadService("rosparam")
+SarkManager.rosparam.getAll()
+SarkManager.configure()
 
 loadComponent("SarkofagIM2RM","IM2RM")
 SarkofagIM2RM.loadService("rosparam")
