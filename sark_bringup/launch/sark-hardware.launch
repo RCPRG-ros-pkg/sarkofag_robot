@@ -21,10 +21,10 @@
   </include>
 
   <group ns="SARK_OROCOS_ROBOT">
-    <param name="EC/master_config" command="cat $(find sark_bringup)/config/master_config.yaml"/>
+    <param name="SarkHardwareInterface_EC/master_config" command="cat $(find sark_bringup)/config/master_config.yaml"/>
     <rosparam>
       SarkManager:
-        hal_component_name: EC
+        hal_component_name: SarkHardwareInterface_EC
     </rosparam>
   </group>
 
