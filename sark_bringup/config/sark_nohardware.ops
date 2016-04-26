@@ -5,6 +5,8 @@ runScript( ros.find("sark_bringup") + "/config/common-imports.ops")
 ros.import("ec_hw_model")
 
 
+string Sark_hi_component() { return string("SarkEcHwModel"); }
+
 loadComponent("SarkEcHwModel","EcHwModel")
 SarkEcHwModel.loadService("rosparam")
 SarkEcHwModel.rosparam.getAll()
@@ -12,21 +14,13 @@ SarkEcHwModel.rosparam.getParam("~/SarkofagMotorParameters/enc_res", "enc_res")
 SarkEcHwModel.configure()
 
 
-runScript( ros.find("sark_bringup") + "/config/sark_inside_p1.ops")
-
-connect("SarkEcHwModel.sarkofag.motor_current_command","SarkofagRegulator.computedPwm_out", ConnPolicy())
-connect("SarkofagPortDoubleAggregate_im2rm.InputPort_0","SarkEcHwModel.sarkofag.motor_position", ConnPolicy())
-connect("SarkofagRegulator.MeasuredPosition","SarkEcHwModel.sarkofag.motor_position", ConnPolicy())
+runScript( ros.find("sark_bringup") + "/config/sark_inside.ops")
 
 addPeer("SarkScheme", "SarkEcHwModel");
 addPeer("SarkManager", "SarkEcHwModel");
 SarkScheme.addBlock("SarkEcHwModel");
-
-addPeer("SarkScheme", "SarkofagRegulator");
-SarkScheme.addBlock("SarkofagRegulator")
 SarkScheme.latchConnections("SarkofagRegulator", "SarkEcHwModel", true);
 
-runScript( ros.find("sark_bringup") + "/config/sark_inside_p2.ops")
-
+SarkScheme.start()
 SarkEcHwModel.start()
 SarkManager.start()
