@@ -31,7 +31,7 @@
 #include "SarkofagManager.h"
 #include <vector>
 #include <string>
-#include "string_colors.h"
+#include "common_headers/string_colors.h"
 
 SarkofagManager::SarkofagManager(const std::string& name)
 : TaskContext(name),
