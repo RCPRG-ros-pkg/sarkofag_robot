@@ -28,8 +28,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SARKOFAGMANAGER_H_
-#define SARKOFAGMANAGER_H_
+#ifndef SARKOFAGSUPERVISOR_H_
+#define SARKOFAGSUPERVISOR_H_
 
 #include <std_msgs/Bool.h>
 
@@ -77,7 +77,7 @@ typedef enum {
   FAULT = 8
 } ECServoState;
 
-class SarkofagManager : public RTT::TaskContext {
+class SarkofagSupervisor : public RTT::TaskContext {
  private:
   TaskContext * EC;
   TaskContext * Scheme;
@@ -106,8 +106,8 @@ class SarkofagManager : public RTT::TaskContext {
   std::vector<std::string> regulators_names_;
 
  public:
-  explicit SarkofagManager(const std::string& name);
-  ~SarkofagManager();
+  explicit SarkofagSupervisor(const std::string& name);
+  ~SarkofagSupervisor();
 
   bool configureHook();
   bool startHook();
@@ -126,4 +126,4 @@ class SarkofagManager : public RTT::TaskContext {
   std::string state_text(ECServoState state);
 };
 
-#endif  // SARKOFAGMANAGER_H_
+#endif  // SARKOFAGSUPERVISOR_H_

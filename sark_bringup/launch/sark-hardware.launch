@@ -23,7 +23,7 @@
   <group ns="SARK_OROCOS_ROBOT">
     <param name="SarkHardwareInterface_EC/master_config" command="cat $(find sark_bringup)/config/master_config.yaml"/>
     <rosparam>
-      SarkManager:
+      SarkSupervisor:
         hal_component_name: SarkHardwareInterface_EC
     </rosparam>
   </group>

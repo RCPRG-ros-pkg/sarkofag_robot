@@ -2,7 +2,7 @@
 
   <group>
     <rosparam>
-      SarkManager:
+      SarkSupervisor:
         debug: false
         fault_autoreset: true
         autostart: true

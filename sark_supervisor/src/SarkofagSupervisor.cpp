@@ -28,12 +28,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "SarkofagManager.h"
+#include "SarkofagSupervisor.h"
+
 #include <vector>
 #include <string>
 #include "common_headers/string_colors.h"
 
-SarkofagManager::SarkofagManager(const std::string& name)
+SarkofagSupervisor::SarkofagSupervisor(const std::string& name)
 : TaskContext(name),
   robot_state_(NOT_OPERATIONAL),
   number_of_servos_(0),
@@ -47,20 +48,20 @@ SarkofagManager::SarkofagManager(const std::string& name)
   this->addProperty("fault_autoreset", fault_autoreset_).doc("");
   this->addProperty("services_names", services_names_).doc("");
   this->addProperty("regulators_names", regulators_names_).doc("");
-  this->addOperation("auto", &SarkofagManager::autoRun, this, RTT::OwnThread).doc("");
-  this->addOperation("setSynchronized", &SarkofagManager::setSynchronized, this, RTT::OwnThread).doc("");
-  this->addOperation("resetFault", &SarkofagManager::resetFaultAll, this, RTT::OwnThread).doc("");
-  this->addOperation("disable", &SarkofagManager::disableAll, this, RTT::OwnThread).doc("");
-  this->addOperation("enable", &SarkofagManager::enableAll, this, RTT::OwnThread).doc("");
-  this->addOperation("beginHoming", &SarkofagManager::beginHomingAll, this, RTT::OwnThread).doc("");
-  this->addOperation("homingDone", &SarkofagManager::homingDoneAll, this, RTT::OwnThread).doc("");
-  this->addOperation("state", &SarkofagManager::stateAll, this, RTT::OwnThread).doc("");
+  this->addOperation("auto", &SarkofagSupervisor::autoRun, this, RTT::OwnThread).doc("");
+  this->addOperation("setSynchronized", &SarkofagSupervisor::setSynchronized, this, RTT::OwnThread).doc("");
+  this->addOperation("resetFault", &SarkofagSupervisor::resetFaultAll, this, RTT::OwnThread).doc("");
+  this->addOperation("disable", &SarkofagSupervisor::disableAll, this, RTT::OwnThread).doc("");
+  this->addOperation("enable", &SarkofagSupervisor::enableAll, this, RTT::OwnThread).doc("");
+  this->addOperation("beginHoming", &SarkofagSupervisor::beginHomingAll, this, RTT::OwnThread).doc("");
+  this->addOperation("homingDone", &SarkofagSupervisor::homingDoneAll, this, RTT::OwnThread).doc("");
+  this->addOperation("state", &SarkofagSupervisor::stateAll, this, RTT::OwnThread).doc("");
 }
 
-SarkofagManager::~SarkofagManager() {
+SarkofagSupervisor::~SarkofagSupervisor() {
 }
 
-bool SarkofagManager::configureHook() {
+bool SarkofagSupervisor::configureHook() {
   if (hal_component_name_.empty() || scheme_component_name_.empty()) {
     return false;
   }
@@ -84,7 +85,7 @@ bool SarkofagManager::configureHook() {
   return true;
 }
 
-bool SarkofagManager::startHook() {
+bool SarkofagSupervisor::startHook() {
   EC = RTT::TaskContext::getPeer(hal_component_name_);
   Scheme = RTT::TaskContext::getPeer(scheme_component_name_);
 
@@ -101,7 +102,7 @@ bool SarkofagManager::startHook() {
   return true;
 }
 
-void SarkofagManager::updateHook() {
+void SarkofagSupervisor::updateHook() {
   switch (robot_state_) {
     case NOT_OPERATIONAL:
 
@@ -211,11 +212,11 @@ void SarkofagManager::updateHook() {
   }
 }
 
-void SarkofagManager::autoRun() {
+void SarkofagSupervisor::autoRun() {
   auto_ = true;
 }
 
-void SarkofagManager::setSynchronized() {
+void SarkofagSupervisor::setSynchronized() {
   robot_state_ = SYNCHRONIZED;
 
   // switch Regulators
@@ -234,7 +235,7 @@ void SarkofagManager::setSynchronized() {
   }
 }
 
-bool SarkofagManager::resetFaultAll() {
+bool SarkofagSupervisor::resetFaultAll() {
   bool out = true;
   for (int i = 0; i < number_of_servos_; i++) {
     RTT::Attribute<ECServoState> * servo_ec_state = (RTT::Attribute<ECServoState> *) EC
@@ -252,7 +253,7 @@ bool SarkofagManager::resetFaultAll() {
   return out;
 }
 
-bool SarkofagManager::enableAll() {
+bool SarkofagSupervisor::enableAll() {
   bool out = true;
   for (int i = 0; i < number_of_servos_; i++) {
     RTT::Attribute<ECServoState> * servo_ec_state = (RTT::Attribute<ECServoState> *) EC
@@ -270,7 +271,7 @@ bool SarkofagManager::enableAll() {
   return out;
 }
 
-bool SarkofagManager::disableAll() {
+bool SarkofagSupervisor::disableAll() {
   bool out = true;
   for (int i = 0; i < number_of_servos_; i++) {
     RTT::Attribute<ECServoState> * servo_ec_state = (RTT::Attribute<ECServoState> *) EC
@@ -286,11 +287,11 @@ bool SarkofagManager::disableAll() {
   return out;
 }
 
-void SarkofagManager::beginHomingAll() {
+void SarkofagSupervisor::beginHomingAll() {
   if (robot_state_ == NOT_SYNCHRONIZED) robot_state_ = SYNCHRONIZING;
 }
 
-void SarkofagManager::homingDoneAll() {
+void SarkofagSupervisor::homingDoneAll() {
   for (int i = 0; i < number_of_servos_; i++) {
     RTT::Attribute<bool> * homing = (RTT::Attribute<bool> *) EC->provides(
         services_names_[i])->getAttribute("homing_done");
@@ -298,7 +299,7 @@ void SarkofagManager::homingDoneAll() {
   }
 }
 
-void SarkofagManager::stateAll() {
+void SarkofagSupervisor::stateAll() {
   for (int i = 0; i < number_of_servos_; i++) {
     RTT::Attribute<ECServoState> * servo_ec_state = (RTT::Attribute<ECServoState> *) EC
         ->provides(services_names_[i])->getAttribute("state");
@@ -307,7 +308,7 @@ void SarkofagManager::stateAll() {
   }
 }
 
-std::string SarkofagManager::state_text(ECServoState state) {
+std::string SarkofagSupervisor::state_text(ECServoState state) {
   switch (state) {
     case INVALID:
       return "INVALID";
@@ -340,4 +341,4 @@ std::string SarkofagManager::state_text(ECServoState state) {
   }
 }
 
-ORO_CREATE_COMPONENT(SarkofagManager)
+ORO_CREATE_COMPONENT(SarkofagSupervisor)

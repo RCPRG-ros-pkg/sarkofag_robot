@@ -1,7 +1,7 @@
 <package>
-  <name>sark_manager</name>
+  <name>sark_supervisor</name>
   <version>0.1.0</version>
-  <description>Sarkofag manager</description>
+  <description>Sarkofag supervisor</description>
   <maintainer email="bartswis@gmail.com">Bartosz Świstak</maintainer>
 
   <license>BSD</license>

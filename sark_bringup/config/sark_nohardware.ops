@@ -17,10 +17,10 @@ SarkEcHwModel.configure()
 runScript( ros.find("sark_bringup") + "/config/sark_inside.ops")
 
 addPeer("SarkScheme", "SarkEcHwModel");
-addPeer("SarkManager", "SarkEcHwModel");
+addPeer("SarkSupervisor", "SarkEcHwModel");
 SarkScheme.addBlock("SarkEcHwModel");
 SarkScheme.latchConnections("SarkofagRegulator", "SarkEcHwModel", true);
 
 SarkScheme.start()
 SarkEcHwModel.start()
-SarkManager.start()
+SarkSupervisor.start()

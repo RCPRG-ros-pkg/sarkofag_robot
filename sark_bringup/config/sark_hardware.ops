@@ -16,8 +16,8 @@ SarkHardwareInterface_EC.configure();
 
 runScript( ros.find("sark_bringup") + "/config/sark_inside.ops")
 
-addPeer("SarkManager", "SarkHardwareInterface_EC");
+addPeer("SarkSupervisor", "SarkHardwareInterface_EC");
 
 SarkHardwareInterface_EC.start()
 SarkScheme.start()
-SarkManager.start()
+SarkSupervisor.start()

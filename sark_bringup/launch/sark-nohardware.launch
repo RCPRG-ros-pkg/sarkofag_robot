@@ -22,7 +22,7 @@
 
   <group ns="SARK_OROCOS_ROBOT">
     <rosparam>
-      SarkManager:
+      SarkSupervisor:
         hal_component_name: SarkEcHwModel
       SarkEcHwModel:
         iteration_per_step: 1

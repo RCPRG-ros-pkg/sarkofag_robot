@@ -9,13 +9,13 @@ SarkScheme.loadService("conman_ros")
 SarkScheme.configure()
 
 
-// SarkManager
+// SarkSupervisor
 
-loadComponent("SarkManager","SarkofagManager")
-setActivity("SarkManager", 0.1, 4, ORO_SCHED_RT);
-SarkManager.loadService("rosparam")
-SarkManager.rosparam.getAll()
-SarkManager.configure()
+loadComponent("SarkSupervisor","SarkofagSupervisor")
+setActivity("SarkSupervisor", 0.1, 4, ORO_SCHED_RT);
+SarkSupervisor.loadService("rosparam")
+SarkSupervisor.rosparam.getAll()
+SarkSupervisor.configure()
 
 
 // SarkDiag
@@ -185,7 +185,7 @@ addPeer("SarkScheme", "SarkofagSplineTrajectoryGeneratorJoint");
 addPeer("SarkScheme", "SarkofagSplineTrajectoryGeneratorMotor");
 addPeer("SarkScheme", "SarkofagRegulator");
 
-addPeer("SarkManager", "SarkScheme");
+addPeer("SarkSupervisor", "SarkScheme");
 
 
 // Blocks
