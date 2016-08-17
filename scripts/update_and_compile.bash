@@ -2,18 +2,44 @@
 # Skrypt powinien być wołan z katalogu robot/src/sarkofag_robot/scripts
 
 
-source /opt/ros/jade/setup.bash
+source /opt/ros/kinetic/setup.bash
 export LANG=en_US.UTF-8
 export LANG=en
 
 wstool merge /tmp/sark.rosinstall
 wstool update
-cd underlay_isolated
-catkin_make_isolated --install -DENABLE_CORBA=ON -DCORBA_IMPLEMENTATION=OMNIORB -DCMAKE_BUILD_TYPE=RelWithDebInfo
-source install_isolated/setup.bash
+
+cd ../underlay_isolated
+catkin config --cmake-args -DENABLE_CORBA=ON -DCORBA_IMPLEMENTATION=OMNIORB -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_CORE_ONLY=ON -DBUILD_SHARED_LIBS=ON -DUSE_DOUBLE_PRECISION=ON
+catkin build
+
+if [ $? -eq 0 ]; 
+then 
+	echo "underlay_isolated build OK" 
+else 
+	echo "underlay_isolated build FAILED" 
+	exit 1 
+fi
 cd ../underlay
-catkin_make_isolated -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCATKIN_ENABLE_TESTING=OFF --install
-source install_isolated/setup.bash
+catkin config --extend ../underlay_isolated/devel/ --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCATKIN_ENABLE_TESTING=OFF
+catkin build
+
+if [ $? -eq 0 ]; 
+then 
+	echo "underlay build OK" 
+else 
+	echo "underlay build FAILED" 
+	exit 1 
+fi
+
 cd ../robot
-catkin_make_isolated -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCATKIN_ENABLE_TESTING=OFF --install
-source devel_isolated/setup.bash
+catkin config --extend ../underlay/devel/ --cmake-args -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCATKIN_ENABLE_TESTING=OFF
+catkin build
+
+if [ $? -eq 0 ]; 
+then 
+	echo "robot build OK" 
+else 
+	echo "robot build FAILED" 
+	exit 1 
+fi
