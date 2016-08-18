@@ -3,6 +3,8 @@
 export LANG=en_US.UTF-8
 export LANGUAGE=en
 
+source /opt/ros/kinetic/setup.bash
+
 read -r -p "Are you now in a directory where you want to store sarkofag repositories? [y/N] " response
 case $response in
     [yY][eE][sS]|[yY]) 
