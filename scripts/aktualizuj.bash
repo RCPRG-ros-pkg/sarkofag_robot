@@ -11,7 +11,8 @@ else
 	then 
 
 		if test -e ./hardware; then
-			wget https://raw.githubusercontent.com/RCPRG-ros-pkg/sarkofag_robot/master/scripts/sarkofag.rosinstall -O /tmp/sark.rosinstall
+			#wget https://raw.githubusercontent.com/RCPRG-ros-pkg/sarkofag_robot/master/scripts/sarkofag.rosinstall -O /tmp/sark.rosinstall
+			wget https://raw.githubusercontent.com/mwegiere/sarkofag_robot/master/scripts/sarkofag.rosinstall -O /tmp/sark.rosinstall
 		else
 			wget https://raw.githubusercontent.com/RCPRG-ros-pkg/sarkofag_robot/master/scripts/sarkofag_sim.rosinstall -O /tmp/sark.rosinstall
 		fi
