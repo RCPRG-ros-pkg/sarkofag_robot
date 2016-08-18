@@ -8,7 +8,7 @@ case $response in
     [yY][eE][sS]|[yY]) 
         wget https://raw.githubusercontent.com/RCPRG-ros-pkg/sarkofag_robot/master/scripts/sarkofag.rosinstall -O /tmp/sark.rosinstall
 	#wget https://raw.githubusercontent.com/RCPRG-ros-pkg/sarkofag_robot/master/scripts/update_and_compile.bash -O /tmp/update_and_compile.bash
-	wget https://github.com/mwegiere/sarkofag_robot/blob/master/scripts/update_and_compile.bash -O /tmp/update_and_compile.bash
+	wget https://raw.githubusercontent.com/mwegiere/sarkofag_robot/master/scripts/update_and_compile.bash -O /tmp/update_and_compile.bash
 	wstool init
 	bash /tmp/update_and_compile.bash
 	touch robot/src/sarkofag_robot/scripts/hardware
