@@ -1,15 +1,9 @@
 #!/bin/bash
-# Skrypt powinien być wołan z katalogu robot/src/sarkofag_robot/scripts
-
-
-source /opt/ros/kinetic/setup.bash
-export LANG=en_US.UTF-8
-export LANG=en
 
 wstool merge /tmp/sark.rosinstall
 wstool update
 
-cd ../underlay_isolated
+cd underlay_isolated
 catkin config --cmake-args -DENABLE_CORBA=ON -DCORBA_IMPLEMENTATION=OMNIORB -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_CORE_ONLY=ON -DBUILD_SHARED_LIBS=ON -DUSE_DOUBLE_PRECISION=ON
 catkin build
 
